@@ -185,14 +185,14 @@ class AdversarialPatchPyTorch(EvasionAttack):
         #if isinstance(target, torch.Tensor):
         predictions, target = self._predictions(images, mask, target)
 
-        if self.use_logits:
-            loss = torch.nn.functional.cross_entropy(
-                input=predictions, target=torch.argmax(target, dim=1), reduction="mean"
-            )
-        else:
-            loss = torch.nn.functional.nll_loss(
-                input=predictions, target=torch.argmax(target, dim=1), reduction="mean"
-            )
+        #if self.use_logits:
+        loss = torch.nn.functional.cross_entropy(
+            input=predictions, target=torch.argmax(target, dim=1), reduction="mean"
+        )
+        #else:
+        #    loss = torch.nn.functional.nll_loss(
+        #        input=predictions, target=torch.argmax(target, dim=1), reduction="mean"
+        #    )
 
         if (not self.targeted and self._optimizer_string != "pgd") or self.targeted and self._optimizer_string == "pgd":
             loss = -loss
@@ -410,12 +410,12 @@ class AdversarialPatchPyTorch(EvasionAttack):
             y = check_and_transform_label_format(labels=y, nb_classes=self.estimator.nb_classes)
 
             # check if logits or probabilities
-            y_pred = self.estimator.predict(x=x[[0]])
+            #y_pred = self.estimator.predict(x=x[[0]])
 
-            if is_probability(y_pred):
-                self.use_logits = False
-            else:
-                self.use_logits = True
+            #if is_probability(y_pred):
+            #    self.use_logits = False
+            #else:
+            #    self.use_logits = True
 
         #if isinstance(y, np.ndarray):
         x_tensor = torch.Tensor(x)
@@ -473,35 +473,17 @@ class AdversarialPatchPyTorch(EvasionAttack):
         self,
         x: np.ndarray,
         scale: float,
-        patch_external: Optional[np.ndarray] = None,
-        mask: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """
         A function to apply the learned adversarial patch to images or videos.
         :param x: Instances to apply randomly transformed patch.
         :param scale: Scale of the applied patch in relation to the estimator input shape.
-        :param patch_external: External patch to apply to images `x`.
-        :param mask: An boolean array of shape equal to the shape of a single samples (1, H, W) or the shape of `x`
-                     (N, H, W) without their channel dimensions. Any features for which the mask is True can be the
-                     center location of the patch during sampling.
         :return: The patched samples.
         """
 
-        #if mask is not None:
-        #    print('651 mask')
-        #    mask = mask.copy()
-        mask = self._check_mask(mask=mask, x=x)
         x_tensor = torch.Tensor(x)
-        #if mask is not None:
-        #    print('655 mask')
-        #    mask_tensor = torch.Tensor(mask)
-        #else:
         mask_tensor = None
-        #if isinstance(patch_external, np.ndarray):
-        #    # можно убрать этот иф
-        #    print('isinstance(patch_external, np.ndarray) 659')
-        #    patch_tensor = torch.Tensor(patch_external)
-        #else:
+
         patch_tensor = self._patch
         return (
             self._random_overlay(images=x_tensor, patch=patch_tensor, scale=scale, mask=mask_tensor)

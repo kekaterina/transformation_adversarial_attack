@@ -19,11 +19,10 @@ from preprocess import (
     get_target_label,
 )
 
-from progress.bar import IncrementalBar
 import sys
 sys.path.append('/dump/ekurdenkova/')
 from PatchGuard.nets.resnet import resnet18 as resnet18_patch
-from PatchGuard.nets.bagnet import bagnet33, bagnet17
+from PatchGuard.nets.bagnet import bagnet33
 from constant import MODEL_MAPPING, DATA_MAPPING, \
     OUTPUT_PATH, OUTPUT_MODEL_NAME
 

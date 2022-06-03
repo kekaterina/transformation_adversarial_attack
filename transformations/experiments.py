@@ -1,10 +1,6 @@
 import sys
 import os
 
-sys.path.append('../')
-sys.path.append('.')
-sys.path.append('/dump/ekurdenkova/gitlab/No_fork/guardiann/guardiann/bagnet/transformations')
-
 from bagnet import *
 import torch
 import numpy as np
@@ -14,7 +10,7 @@ import cv2
 import matplotlib.pyplot as plt
 from torch import Tensor
 
-from transformations import get_transformation_choise, reshape_image, \
+from .transformations import get_transformation_choise, reshape_image, \
     rotate_image, dark_image, gauss_transformer
 
 SHORT_MAPPING_DICT = {5: 'loaf',

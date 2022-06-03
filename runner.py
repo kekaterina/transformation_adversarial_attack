@@ -1,7 +1,5 @@
 import sys
 
-sys.path.append('../')
-
 from sklearn.utils import shuffle
 import torch
 
@@ -13,7 +11,7 @@ import numpy as np
 
 from generate_adversarial_images import get_adversarial_patch_pictures_by_art, \
     get_adversarial_patch_pictures_by_custom
-from experiments import custom_seq_transformation
+from transformations.experiments import custom_seq_transformation
 from constant import MODEL_MAPPING, DATA_MAPPING, ADVERSARIAL_IMAGES_MAPPING, \
     OUTPUT_PATH, OUTPUT_PATH_TRANSFORMATION_IMAGE, PREFIX_NAME, CUSTOM_MODEL_LOAD_PARAMS, RANDOM_STATE
 

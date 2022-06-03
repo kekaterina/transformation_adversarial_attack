@@ -1,8 +1,6 @@
 import sys
 
 sys.path.append('PatchGuard')
-sys.path.append('.')
-sys.path.append('/dump/ekurdenkova/')
 
 from sklearn.utils import shuffle
 import pathlib
