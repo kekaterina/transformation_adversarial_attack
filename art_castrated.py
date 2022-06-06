@@ -136,9 +136,10 @@ class AdversarialPatchPyTorch(EvasionAttack):
             self._optimizer = torch.optim.Adam([self._patch], lr=self.learning_rate)
 
     def _train_step(
-        self, images: "torch.Tensor", target: "torch.Tensor", mask: Optional["torch.Tensor"] = None
+        self, images: "torch.Tensor", target: "torch.Tensor",
     ) -> "torch.Tensor":
 
+        # здесь происходит шаг атаки и результат записывается сразу в наклейку - атрибут класса.
         self.estimator.model.zero_grad()
         loss = self._loss(images, target)
         loss.backward(retain_graph=True)
@@ -380,7 +381,7 @@ class AdversarialPatchPyTorch(EvasionAttack):
             for images, target in data_loader:
                 images = images.to(self.estimator.device)
                 target = target.to(self.estimator.device)
-                _ = self._train_step(images=images, target=target, mask=None)
+                _ = self._train_step(images=images, target=target)
 
         return (
             self._patch.detach().cpu().numpy(),
