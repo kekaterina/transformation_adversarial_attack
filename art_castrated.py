@@ -123,12 +123,9 @@ class AdversarialPatchPyTorch(EvasionAttack):
         self.input_shape = self.estimator.input_shape
 
         self.nb_dims = len(self.image_shape)
-        if self.nb_dims == 3:
-            self.i_h = 1
-            self.i_w = 2
-        elif self.nb_dims == 4:
-            self.i_h = 2
-            self.i_w = 3
+        #if self.nb_dims == 3:
+        self.i_h = 1
+        self.i_w = 2
 
         mean_value = (self.estimator.clip_values[1] - self.estimator.clip_values[0]) / 2.0 + self.estimator.clip_values[
             0
@@ -231,6 +228,8 @@ class AdversarialPatchPyTorch(EvasionAttack):
 
         nb_samples = images.shape[0]
 
+        # Маски совпадают по размеру с квадратной наклейкой. Они нужны для того, чтобы делать из наклейки
+        # круглую форму.
         image_mask = self._get_circular_patch_mask(nb_samples=nb_samples)
         image_mask = image_mask.float()
 
@@ -238,50 +237,56 @@ class AdversarialPatchPyTorch(EvasionAttack):
 
         smallest_image_edge = np.minimum(self.image_shape[self.i_h], self.image_shape[self.i_w])
 
+        # здесь маска становится по размерам как исходная картинка (если картинка не квадратная, то
+        # то маска будет квадратной с длиной стороны равной минимальной стороне картинки)
         image_mask = torchvision.transforms.functional.resize(
             img=image_mask,
             size=(smallest_image_edge, smallest_image_edge),
             interpolation=2,
         )
 
-        pad_h_before = int((self.image_shape[self.i_h] - image_mask.shape[self.i_h_patch + 1]) / 2)
-        pad_h_after = int(self.image_shape[self.i_h] - pad_h_before - image_mask.shape[self.i_h_patch + 1])
+        # рассчитываем координату по высоте верха и низа маски на картинке (когда картинка квадратная,
+        # тот pad_h/w_before/after = 0, когда прямоугольная, то нет)
+        #pad_h_before = int((self.image_shape[self.i_h] - image_mask.shape[self.i_h_patch + 1]) / 2)
+        #pad_h_after = int(self.image_shape[self.i_h] - pad_h_before - image_mask.shape[self.i_h_patch + 1])
 
-        pad_w_before = int((self.image_shape[self.i_w] - image_mask.shape[self.i_w_patch + 1]) / 2)
-        pad_w_after = int(self.image_shape[self.i_w] - pad_w_before - image_mask.shape[self.i_w_patch + 1])
+        # рассчитываем координату по ширине права и лева маски на картинке
+        #pad_w_before = int((self.image_shape[self.i_w] - image_mask.shape[self.i_w_patch + 1]) / 2)
+        #pad_w_after = int(self.image_shape[self.i_w] - pad_w_before - image_mask.shape[self.i_w_patch + 1])
 
-        image_mask = torchvision.transforms.functional.pad(
-            img=image_mask,
-            padding=[pad_w_before, pad_h_before, pad_w_after, pad_h_after],
-            fill=0,
-            padding_mode="constant",
-        )
 
-        if self.nb_dims == 4:
-            image_mask = torch.unsqueeze(image_mask, dim=1)
-            image_mask = torch.repeat_interleave(image_mask, dim=1, repeats=self.input_shape[0])
+        # заполняем нулями рамку до картинки. Когда картинка квадратная, то ничего не меняется на этом шаге.
+        #image_mask = torchvision.transforms.functional.pad(
+        #    img=image_mask,
+        #    padding=[pad_w_before, pad_h_before, pad_w_after, pad_h_after],
+        #    fill=0,
+        #    padding_mode="constant",
+        #)
+
+        #if self.nb_dims == 4:
+        #    image_mask = torch.unsqueeze(image_mask, dim=1)
+        #    image_mask = torch.repeat_interleave(image_mask, dim=1, repeats=self.input_shape[0])
 
         image_mask = image_mask.float()
 
         patch = patch.float()
+        # размножаем наклейку на все картинки
         padded_patch = torch.stack([patch] * nb_samples)
 
+        # растягиваем наклейку по размеру как растягивали маску - до размера квадрата с длиной стороны
+        # равной кратчайшей длине стороны картинки
         padded_patch = torchvision.transforms.functional.resize(
             img=padded_patch,
             size=(smallest_image_edge, smallest_image_edge),
             interpolation=2,
         )
-
-        padded_patch = torchvision.transforms.functional.pad(
-            img=padded_patch,
-            padding=[pad_w_before, pad_h_before, pad_w_after, pad_h_after],
-            fill=0,
-            padding_mode="constant",
-        )
-
-        if self.nb_dims == 4:
-            padded_patch = torch.unsqueeze(padded_patch, dim=1)
-            padded_patch = torch.repeat_interleave(padded_patch, dim=1, repeats=self.input_shape[0])
+        # аналогично маске заполняем нулями рамку до наклейки, но при квадратной картинке это ничего не меняет.
+        #padded_patch = torchvision.transforms.functional.pad(
+        #    img=padded_patch,
+        #    padding=[pad_w_before, pad_h_before, pad_w_after, pad_h_after],
+        #    fill=0,
+        #    padding_mode="constant",
+        #)
 
         padded_patch = padded_patch.float()
 
@@ -289,6 +294,9 @@ class AdversarialPatchPyTorch(EvasionAttack):
         padded_patch_list = []
 
         for i_sample in range(nb_samples):
+            # если не задано расположение локации наклейки, то устанавливаем масштаб наклейки из интервала
+            # или из инициализации.
+            # если локация есть, то высчитываем масштаб как отношение наклейки к кротчайшей длине картинки
             if self.patch_location is None:
                 if scale is None:
                     im_scale = np.random.uniform(low=self.scale_min, high=self.scale_max)
@@ -296,48 +304,35 @@ class AdversarialPatchPyTorch(EvasionAttack):
                     im_scale = scale
             else:
                 im_scale = self.patch_shape[self.i_h] / smallest_image_edge
+                print(f'im_scale {im_scale}')
 
-            if mask is None:
-                if self.patch_location is None:
-                    padding_after_scaling_h = (
-                        self.image_shape[self.i_h] - im_scale * padded_patch.shape[self.i_h + 1]
-                    ) / 2.0
-                    padding_after_scaling_w = (
-                        self.image_shape[self.i_w] - im_scale * padded_patch.shape[self.i_w + 1]
-                    ) / 2.0
-                    x_shift = np.random.uniform(-padding_after_scaling_w, padding_after_scaling_w)
-                    y_shift = np.random.uniform(-padding_after_scaling_h, padding_after_scaling_h)
-                else:
-                    # тут нет скейла в формулах почему? наверное не мб одновременно локации и скейла??
-                    padding_h = int(math.floor(self.image_shape[self.i_h] - self.patch_shape[self.i_h]) / 2.0)
-                    padding_w = int(math.floor(self.image_shape[self.i_w] - self.patch_shape[self.i_w]) / 2.0)
-                    x_shift = -padding_w + self.patch_location[0]
-                    y_shift = -padding_h + self.patch_location[1]
+            #if mask is None:
+            print(f'mask is none 320')
+            if self.patch_location is None:
+                # высчитываем ширину и длину рамки у картинки до наклейки при изменении масштаба наклейки
+                # это нужно, чтобы понять, как сильно мы можем двигать наклейку
+                # вверх/низ и право/лево при выборе локации
+                padding_after_scaling_h = (
+                    self.image_shape[self.i_h] - im_scale * padded_patch.shape[self.i_h + 1]
+                ) / 2.0
+                padding_after_scaling_w = (
+                    self.image_shape[self.i_w] - im_scale * padded_patch.shape[self.i_w + 1]
+                ) / 2.0
+                # выбираем смещение, на которое двигаем наклейку/выбор локации наклейки
+                x_shift = np.random.uniform(-padding_after_scaling_w, padding_after_scaling_w)
+                y_shift = np.random.uniform(-padding_after_scaling_h, padding_after_scaling_h)
             else:
-                mask_2d = mask[i_sample, :, :]
-
-                edge_x_0 = int(im_scale * padded_patch.shape[self.i_w + 1]) // 2
-                edge_x_1 = int(im_scale * padded_patch.shape[self.i_w + 1]) - edge_x_0
-                edge_y_0 = int(im_scale * padded_patch.shape[self.i_h + 1]) // 2
-                edge_y_1 = int(im_scale * padded_patch.shape[self.i_h + 1]) - edge_y_0
-
-                mask_2d[0:edge_x_0, :] = False
-                if edge_x_1 > 0:
-                    mask_2d[-edge_x_1:, :] = False
-                mask_2d[:, 0:edge_y_0] = False
-                if edge_y_1 > 0:
-                    mask_2d[:, -edge_y_1:] = False
-
-                num_pos = np.argwhere(mask_2d).shape[0]
-                pos_id = np.random.choice(num_pos, size=1)
-                pos = np.argwhere(mask_2d)[pos_id[0]]
-                x_shift = pos[1] - self.image_shape[self.i_w] // 2
-                y_shift = pos[0] - self.image_shape[self.i_h] // 2
+                # тут нет скейла в формулах почему? наверное не мб одновременно локации и скейла??
+                # когда локация наклейки задана, то смещение высчитывается по формулам (почему??)
+                padding_h = int(math.floor(self.image_shape[self.i_h] - self.patch_shape[self.i_h]) / 2.0)
+                padding_w = int(math.floor(self.image_shape[self.i_w] - self.patch_shape[self.i_w]) / 2.0)
+                x_shift = -padding_w + self.patch_location[0]
+                y_shift = -padding_h + self.patch_location[1]
 
             phi_rotate = 0#float(np.random.uniform(-self.rotation_max, self.rotation_max))
 
             image_mask_i = image_mask[i_sample]
-
+            # трансформируем маску до нужного масштаба, поворот тут убран
             image_mask_i = torchvision.transforms.functional.affine(
                 img=image_mask_i,
                 angle=phi_rotate,
@@ -351,6 +346,7 @@ class AdversarialPatchPyTorch(EvasionAttack):
             image_mask_list.append(image_mask_i)
             padded_patch_i = padded_patch[i_sample]
 
+            # трансформируем наклейку до нужного масштаба, поворот тут убран
             padded_patch_i = torchvision.transforms.functional.affine(
                 img=padded_patch_i,
                 angle=phi_rotate,
@@ -369,6 +365,8 @@ class AdversarialPatchPyTorch(EvasionAttack):
             torch.from_numpy(np.ones(shape=image_mask.shape, dtype=np.float32)).to(self.estimator.device) - image_mask
         )
 
+        # готовая картинка с наклейкой получается через суммирование картинки с
+        # вырезанным на картинке местом для наклейки и наклейки
         patched_images = images * inverted_mask + padded_patch * image_mask
 
         if not self.estimator.channels_first:
@@ -395,8 +393,7 @@ class AdversarialPatchPyTorch(EvasionAttack):
         # Маски совпадают по размеру с квадратной наклейкой. Они нужны для того, чтобы делать из наклейки нужную форму,
         # например, круглую. Где в маске будет находиться наклейка - там нули. Генерируются маски в функции
         # _get_circular_patch_mask.
-        if mask is not None:
-            mask = mask.copy()
+
         mask = self._check_mask(mask=mask, x=x)
 
         if self.patch_location is not None and mask is not None:
@@ -409,30 +406,13 @@ class AdversarialPatchPyTorch(EvasionAttack):
         if hasattr(self.estimator, "nb_classes"):
             y = check_and_transform_label_format(labels=y, nb_classes=self.estimator.nb_classes)
 
-            # check if logits or probabilities
-            #y_pred = self.estimator.predict(x=x[[0]])
-
-            #if is_probability(y_pred):
-            #    self.use_logits = False
-            #else:
-            #    self.use_logits = True
-
         #if isinstance(y, np.ndarray):
         x_tensor = torch.Tensor(x)
         y_tensor = torch.Tensor(y)
 
         if mask is None:
+            print('lalalaaa 425')
             dataset = torch.utils.data.TensorDataset(x_tensor, y_tensor)
-            data_loader = torch.utils.data.DataLoader(
-                dataset=dataset,
-                batch_size=self.batch_size,
-                shuffle=shuffle,
-                drop_last=False,
-            )
-        else:
-            print('mask not is none 492')
-            mask_tensor = torch.Tensor(mask)
-            dataset = torch.utils.data.TensorDataset(x_tensor, y_tensor, mask_tensor)
             data_loader = torch.utils.data.DataLoader(
                 dataset=dataset,
                 batch_size=self.batch_size,
@@ -441,12 +421,13 @@ class AdversarialPatchPyTorch(EvasionAttack):
             )
 
         for i_iter in trange(self.max_iter, desc="Adversarial Patch PyTorch", disable=not self.verbose):
-            if mask is None:
-                for images, target in data_loader:
-                    images = images.to(self.estimator.device)
-                    #if isinstance(target, torch.Tensor):
-                    target = target.to(self.estimator.device)
-                    _ = self._train_step(images=images, target=target, mask=None)
+            #if mask is None:
+            print('skjkjs 447')
+            for images, target in data_loader:
+                images = images.to(self.estimator.device)
+                #if isinstance(target, torch.Tensor):
+                target = target.to(self.estimator.device)
+                _ = self._train_step(images=images, target=target, mask=None)
 
         return (
             self._patch.detach().cpu().numpy(),
