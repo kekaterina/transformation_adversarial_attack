@@ -46,7 +46,7 @@ def get_adversarial_patch_pictures_by_art(model, x, y, filename='test', patch_sc
                                          patch_location=patch_location, targeted=False)
         patch, patch_mask = attack.generate(x=np.expand_dims(im, axis=0), y=np.expand_dims(la, axis=0))
 
-        res = attack.apply_patch(x=im, scale=patch_scale/224)#, patch_external=Tensor(patch))
+        res = attack.apply_patch(x=np.expand_dims(im, axis=0), scale=patch_scale/224)#, patch_external=Tensor(patch))
         adversarial_res.append(res)
 
     results_all = np.concatenate(adversarial_res)
