@@ -125,9 +125,7 @@ class AdversarialPatchPyTorch(EvasionAttack):
         self.i_h = 1
         self.i_w = 2
 
-        mean_value = (self.estimator.clip_values[1] - self.estimator.clip_values[0]) / 2.0 + self.estimator.clip_values[
-            0
-        ]
+        mean_value = (self.estimator.clip_values[1] + self.estimator.clip_values[0]) / 2.0
         self._initial_value = np.ones(self.patch_shape) * mean_value
         self._patch = torch.tensor(self._initial_value, requires_grad=True, device=self.estimator.device)
 

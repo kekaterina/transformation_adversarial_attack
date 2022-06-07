@@ -191,7 +191,7 @@ def main():
             else:
                 weights = torch_load(args.model_path)
             model.load_state_dict(weights)
-        model.eval().to(device)
+    model.eval().to(device)
 
     if args.mode == 'generation':
         print('Generation adversarial images')
