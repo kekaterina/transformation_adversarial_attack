@@ -325,6 +325,8 @@ class AdversarialPatchPyTorch(EvasionAttack):
 
         # готовая картинка с наклейкой получается через суммирование картинки с
         # вырезанным на картинке местом для наклейки и наклейки
+        print(f'images {images.device}, inverted_mask {inverted_mask.device}, '
+              f'padded_patch {padded_patch.device}, image_mask {image_mask.device}')
         patched_images = images * inverted_mask + padded_patch * image_mask
 
         if not self.estimator.channels_first:
@@ -376,6 +378,7 @@ class AdversarialPatchPyTorch(EvasionAttack):
         )
 
         for i_iter in trange(self.max_iter, desc="Adversarial Patch PyTorch", disable=not self.verbose):
+            print(f'iter {i_iter}')
             for images, target in data_loader:
                 images = images.to(self.estimator.device)
                 target = target.to(self.estimator.device)
@@ -414,7 +417,7 @@ class AdversarialPatchPyTorch(EvasionAttack):
         :return: The patched samples.
         """
 
-        x_tensor = torch.Tensor(x)
+        x_tensor = torch.Tensor(x).to(self.estimator.device)
 
         patch_tensor = self._patch
         return (

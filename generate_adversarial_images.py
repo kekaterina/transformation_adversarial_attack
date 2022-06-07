@@ -28,7 +28,7 @@ def get_adversarial_patch_pictures_by_art(model, x, y, filename='test', patch_sc
         optimizer=optimizer,
         input_shape=(3, 224, 224),
         nb_classes=nb_classes,
-        device_type='cpu'
+        device_type='gpu'
     )
 
     #dataloader = get_dataloader(x, y, device='cpu', batch_size=batch_size, shuffle=False)
