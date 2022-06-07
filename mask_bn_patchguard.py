@@ -1,8 +1,8 @@
 import torch
 import torch.backends.cudnn as cudnn
 
-import PatchGuard.nets.bagnet as patch_bagnet
-from PatchGuard.utils.defense_utils import *
+import add_lib.PatchGuard.nets.bagnet as patch_bagnet
+from add_lib.PatchGuard.utils.defense_utils import *
 
 import os
 import argparse
@@ -10,7 +10,7 @@ from tqdm import tqdm
 import numpy as np
 from math import ceil
 
-from PatchGuard.mask_bn import get_dataset
+from add_lib.PatchGuard.mask_bn import get_dataset
 
 parser = argparse.ArgumentParser()
 

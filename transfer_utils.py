@@ -1,10 +1,3 @@
-import sys
-
-sys.path.append('lab')
-sys.path.append('PatchGuard')
-sys.path.append('/dump/ekurdenkova/')
-sys.path.append('.')
-
 import pandas as pd
 from collections import OrderedDict
 
@@ -18,7 +11,7 @@ import numpy as np
 
 from preprocess import ImagenetDataset
 
-from PatchGuard.utils.defense_utils import masking_defense, provable_masking, clipping_defense, provable_clipping
+from add_lib.PatchGuard.utils.defense_utils import masking_defense, provable_masking, clipping_defense, provable_clipping
 from math import ceil
 from torchvision.models import resnet18
 

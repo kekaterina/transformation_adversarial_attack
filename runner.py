@@ -3,7 +3,7 @@ import sys
 from sklearn.utils import shuffle
 import torch
 
-from main import attack_step, get_model, str2bool
+from main import get_model, str2bool
 import argparse
 import pathlib
 from torch import load as torch_load
@@ -13,7 +13,7 @@ from generate_adversarial_images import get_adversarial_patch_pictures_by_art, \
     get_adversarial_patch_pictures_by_custom
 from transformations.experiments import custom_seq_transformation
 from constant import MODEL_MAPPING, DATA_MAPPING, ADVERSARIAL_IMAGES_MAPPING, \
-    OUTPUT_PATH, OUTPUT_PATH_TRANSFORMATION_IMAGE, PREFIX_NAME, CUSTOM_MODEL_LOAD_PARAMS, RANDOM_STATE
+    OUTPUT_PATH, OUTPUT_PATH_TRANSFORMATION_IMAGE, PREFIX_NAME, RANDOM_STATE
 
 
 def parse_arguments():

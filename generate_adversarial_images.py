@@ -1,7 +1,3 @@
-import sys
-
-sys.path.append('../')
-
 from preprocess import get_dataloader
 
 from art.attacks.evasion import AdversarialPatchPyTorch
@@ -9,7 +5,6 @@ from art.estimators.classification import PyTorchClassifier
 
 from torch.nn import CrossEntropyLoss
 from torch.optim import SGD, Adam
-from torch import Tensor, FloatTensor, LongTensor, device, cuda, no_grad
 
 import numpy as np
 

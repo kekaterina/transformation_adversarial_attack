@@ -1,7 +1,3 @@
-import sys
-
-sys.path.append('PatchGuard')
-
 from sklearn.utils import shuffle
 import pathlib
 import torch

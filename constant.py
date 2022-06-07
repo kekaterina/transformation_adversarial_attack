@@ -1,5 +1,5 @@
-from PatchGuard.nets.resnet import resnet18 as resnet18_patch
-from PatchGuard.nets.bagnet import bagnet33
+from add_lib.PatchGuard.nets.resnet import resnet18 as resnet18_patch
+from add_lib.PatchGuard.nets.bagnet import bagnet33
 from torchvision.models import resnet18
 from bagnet import ClippedBagNet
 

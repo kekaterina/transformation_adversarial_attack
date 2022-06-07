@@ -19,10 +19,8 @@ from preprocess import (
     get_target_label,
 )
 
-import sys
-sys.path.append('/dump/ekurdenkova/')
-from PatchGuard.nets.resnet import resnet18 as resnet18_patch
-from PatchGuard.nets.bagnet import bagnet33
+from add_lib.PatchGuard.nets.resnet import resnet18 as resnet18_patch
+from add_lib.PatchGuard.nets.bagnet import bagnet33
 from constant import MODEL_MAPPING, DATA_MAPPING, \
     OUTPUT_PATH, OUTPUT_MODEL_NAME
 

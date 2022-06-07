@@ -4,11 +4,8 @@
 ##########################################################################################
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
-import sys
 
-sys.path.append('./../../')
-sys.path.append('./../')
-from lab.guardiann.guardiann.bagnet.preprocess import ImagenetDataset
+from preprocess import ImagenetDataset
 from sklearn.model_selection import train_test_split
 
 import argparse
@@ -31,7 +28,7 @@ import torch.utils.data.distributed
 import torchvision.models as models
 import nets.bagnet
 
-from PatchGuard.misc.train_imagenet import adjust_learning_rate, AverageMeter, accuracy
+from add_lib.PatchGuard.misc.train_imagenet import adjust_learning_rate, AverageMeter, accuracy
 
 from constant import DATA_MAPPING
 

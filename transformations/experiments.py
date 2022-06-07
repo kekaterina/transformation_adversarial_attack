@@ -1,4 +1,3 @@
-import sys
 import os
 
 from bagnet import *
