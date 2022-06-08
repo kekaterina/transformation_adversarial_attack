@@ -1,14 +1,14 @@
 python runner.py \
         --mode generation \
-        --model cbn \
+        --model resnet \
         --load-from-constant True \
         --patch-scale 32 \
         --type-attack art \
         --target False \
         --patch-type square \
         --poln False \
-        --filename cbn_32_castr_square_untarg
+        --filename resnet_32_castr_square_untarg
 
 # filename поменять на свое название, куда сохранять.
-# my_code_alone/bagnet/cbn_32_castr_square_untarg.npy
-# for model cbn acc=0.6614726550565231
+# my_code_alone/bagnet/resnet_32_castr_square_untarg.npy
+# for model resnet acc=0.7665750076382524

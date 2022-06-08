@@ -1,8 +1,5 @@
 python runner.py \
-        --adversarial-images-arr-path article_data/images_without_transform/resnet_32_custom_adv_images.npy \
         --mode generation \
-        --output-trans-image castr_art \
-        --prefix-name resnet_32_poln_square_untarg \
         --model resnet \
         --load-from-constant True \
         --patch-scale 32 \
