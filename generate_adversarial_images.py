@@ -12,12 +12,14 @@ from attacks import PgdSticker
 from main import attack_step
 from torch.utils.tensorboard import SummaryWriter
 
-from art_castrated import AdversarialPatchPyTorch as CASTR_AdversarialPatchPyTorch
+from art_castrated import CastrAdversarialPatchPyTorch
+from poln_art import PolnAdversarialPatchPyTorch
 
 
 def get_adversarial_patch_pictures_by_art(model, x, y, filename='test', patch_scale=30,
-                                  nb_classes=10, batch_size=5, max_iter=500,
-                                  patch_type='square', rotation_max=22.5, patch_location=None, learning_rate=5.0):
+                                          nb_classes=10, batch_size=5, max_iter=500,
+                                          patch_type='circle', rotation_max=22.5, patch_location=None,
+                                          learning_rate=5.0, targeted=False, poln=False):
     criterion = CrossEntropyLoss()
     optimizer = Adam(model.parameters(), lr=learning_rate)
 
@@ -40,10 +42,16 @@ def get_adversarial_patch_pictures_by_art(model, x, y, filename='test', patch_sc
         #                                 max_iter=max_iter, patch_type=patch_type,
         #                                 rotation_max=rotation_max, learning_rate=learning_rate,
         #                                 patch_location=patch_location)
-        attack = CASTR_AdversarialPatchPyTorch(classifier, batch_size=batch_size, patch_shape=(3, patch_scale, patch_scale),
-                                         max_iter=max_iter, patch_type=patch_type,
-                                         rotation_max=rotation_max, learning_rate=learning_rate,
-                                         patch_location=patch_location, targeted=False)
+        if poln:
+            attack = PolnAdversarialPatchPyTorch(classifier, batch_size=batch_size, patch_shape=(3, patch_scale, patch_scale),
+                                             max_iter=max_iter, patch_type=patch_type,
+                                             rotation_max=rotation_max, learning_rate=learning_rate,
+                                             patch_location=patch_location, targeted=targeted)
+        else:
+            attack = CastrAdversarialPatchPyTorch(classifier, batch_size=batch_size, patch_shape=(3, patch_scale, patch_scale),
+                                             max_iter=max_iter, patch_type=patch_type,
+                                             rotation_max=rotation_max, learning_rate=learning_rate,
+                                             patch_location=patch_location, targeted=targeted)
         patch, patch_mask = attack.generate(x=np.expand_dims(im, axis=0), y=np.expand_dims(la, axis=0))
 
         res = attack.apply_patch(x=np.expand_dims(im, axis=0), scale=patch_scale/224)#, patch_external=Tensor(patch))

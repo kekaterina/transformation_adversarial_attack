@@ -152,6 +152,24 @@ def parse_arguments():
         default=40,
         help='maximum iterations for attack',
     )
+    parser.add_argument(
+        '--patch-type',
+        type=str,
+        default='square',
+        help='',
+    )
+    parser.add_argument(
+        '--target',
+        type=str2bool,
+        default=False,
+        help='',
+    )
+    parser.add_argument(
+        '--poln',
+        type=str2bool,
+        default=False,
+        help='',
+    )
 
     return parser.parse_args()
 
@@ -205,7 +223,8 @@ def main():
                                                   patch_scale=args.patch_scale,
                                                   nb_classes=args.num_classes,
                                                   batch_size=1, max_iter=args.max_iters,
-                                                  patch_type='circle')
+                                                  patch_type=args.patch_type,
+                                                  targeted=args.target, poln=args.poln)
 
         if args.type_attack == 'custom':
             if args.max_iters != 40:

@@ -28,7 +28,7 @@ import torchvision
 logger = logging.getLogger(__name__)
 
 
-class AdversarialPatchPyTorch(EvasionAttack):
+class CastrAdversarialPatchPyTorch(EvasionAttack):
     """
     Implementation of the adversarial patch attack for square and rectangular images and videos in PyTorch.
     | Paper link: https://arxiv.org/abs/1712.09665
