@@ -7,10 +7,12 @@ from torch.nn import CrossEntropyLoss
 from torch.optim import SGD, Adam
 
 import numpy as np
+from sklearn import metrics
 
 from attacks import PgdSticker
 from main import attack_step
 from torch.utils.tensorboard import SummaryWriter
+from torch import Tensor
 
 from art_castrated import CastrAdversarialPatchPyTorch
 from poln_art import PolnAdversarialPatchPyTorch
@@ -35,6 +37,8 @@ def get_adversarial_patch_pictures_by_art(model, x, y, filename='test', patch_sc
 
     #dataloader = get_dataloader(x, y, device='cpu', batch_size=batch_size, shuffle=False)
     adversarial_res = []
+    predictions_true = np.zeros(y.shape[0])
+    predictions = np.zeros(y.shape[0])
 
     for num, im in enumerate(x):
         la = y[num]
@@ -57,9 +61,21 @@ def get_adversarial_patch_pictures_by_art(model, x, y, filename='test', patch_sc
         res = attack.apply_patch(x=np.expand_dims(im, axis=0), scale=patch_scale/224)#, patch_external=Tensor(patch))
         adversarial_res.append(res)
 
+        pred = predict_one_image(image=res, model=model, add_dimension=False)
+        predictions[num] = pred
+
+        pred = predict_one_image(image=im, model=model, add_dimension=True)
+        predictions_true[num] = pred
+
+
     results_all = np.concatenate(adversarial_res)
     np.save(filename, results_all)
 
+    adver_acc = metrics.accuracy_score(y, predictions)
+    acc = metrics.accuracy_score(y, predictions_true)
+
+    print(f'True accuracy = {acc}\n Adversarial accuracy = {adver_acc}')
+    print(f'====>: {y.shape[0]*adver_acc} of {y.shape[0]} pictures changed label in attack')
     return results_all
 
 
@@ -91,3 +107,13 @@ def get_adversarial_patch_pictures_by_custom(model, images, labels, filename,
     return {'adv_images': adv_images,
             'pred_labels': pred_labels,
             'target_labels': target_labels}
+
+
+def predict_one_image(image, model, add_dimension=False):
+    if add_dimension:
+        image = np.expand_dims(image, axis=0)
+    tensor_res = Tensor(image).cuda()
+    pred_logits = model(tensor_res).detach().cpu().numpy()
+    pred = np.argmax(pred_logits, axis=1)[0]
+
+    return pred
