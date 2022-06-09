@@ -75,7 +75,7 @@ def get_adversarial_patch_pictures_by_art(model, x, y, filename='test', patch_sc
     acc = metrics.accuracy_score(y, predictions_true)
 
     print(f'True accuracy = {acc}\n Adversarial accuracy = {adver_acc}')
-    print(f'====>: {y.shape[0]*adver_acc} of {y.shape[0]} pictures changed label in attack')
+    print(f'====>: {y.shape[0]*(1-adver_acc)} of {y.shape[0]} pictures changed label in attack')
     return results_all
 
 
