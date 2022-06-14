@@ -131,6 +131,7 @@ def get_results_transfer_attack(vanilla_model, patchguard_model, x_data, y, thre
                                           'need_update_weights'],
                                       num_classes=CUSTOM_MODEL_LOAD_PARAMS[vanilla_model_key]['num_classes'],
                                       device=device)
+            model.eval()  # возможно надо
             acc = predict_accuracy(model, x_data[data_key], y)
             vanilla_results[vanilla_model_key] = acc
 
@@ -144,6 +145,7 @@ def get_results_transfer_attack(vanilla_model, patchguard_model, x_data, y, thre
                                               'need_update_weights'],
                                           num_classes=CUSTOM_MODEL_LOAD_PARAMS[patchguard_model_key]['num_classes'],
                                           device=device)
+                model.eval()  # возможно надо
                 pred_list, clean_pred_list, result_list, accuracy_list, d = predict_patchguard(
                     model=model,
                     x=x_data[data_key],
@@ -221,7 +223,7 @@ def get_little_results_transfer_attack(all_results):
     exps = convert_dict_to_df(all_results)
     big_df = get_df_per_data_results(exps)
 
-    keys = list(big_df.keys())
+    keys = list(big_df.keys()) #keys is ['original', 'adversarial_patch_images_resnet_32', 'adversarial_patch_images_cbn_32']
     transfer_attack_df = pd.DataFrame({'model': big_df[keys[0]]['model']})
 
     for col in ['accuracy', 'Clean accuracy with defense']:
@@ -242,7 +244,7 @@ def quadric_df(big_df, model, patch_size, model_list=None):
     for i, col in enumerate(models):
         for j, row in enumerate(['clean', 'rotate', 'dark', 'gauss', 'combo']):
             if j == 0:
-                name = f'adversarial_patch_images_{col}_{patch_size}_accuracy'
+                name = f'adversarial_patch_images_{col}_{patch_size}_accuracy' # подозрительное место
             else:
                 name = f'{col}_{patch_size}_adv_{row}_images_accuracy'
             arr[j][i] = big_df_cp[big_df_cp.model == model][name].values[0]
@@ -292,7 +294,7 @@ def for_patch_quadric_df(df, model, patch_size, model_list=None, mapping_model=N
     for i, col in enumerate(models):
         for j, row in enumerate(['clean', 'rotate', 'dark', 'gauss', 'combo']):
             if j == 0:
-                name = f'adversarial_patch_images_{col}_{patch_size}_Clean accuracy with defense'
+                name = f'adversarial_patch_images_{col}_{patch_size}_Clean accuracy with defense' # подозрительное место
             else:
                 name = f'{col}_{patch_size}_adv_{row}_images_Clean accuracy with defense'
 
