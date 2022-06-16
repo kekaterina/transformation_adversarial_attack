@@ -1,4 +1,4 @@
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, TensorDataset
 from torch import Tensor, LongTensor
 import numpy as np
 
@@ -41,10 +41,9 @@ def preprocess_data_short_cbn(image_arr_path, lab_arr_path, renumber=True):
     return images, labels
 
 
-def get_dataloader(x, y, device, shuffle=True, batch_size=10):
-    x = Tensor(x).to(device)
-    y = LongTensor(y).to(device)
-    dataset = ImagenetDataset(x, y)
+def get_dataloader(xs, device, shuffle=True, batch_size=10):
+    xs = [Tensor(e).to(device) for e in xs]
+    dataset = TensorDataset(*xs)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
     return dataloader

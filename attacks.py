@@ -38,7 +38,7 @@ class PgdSticker:
         else:
             self.loss_fn = loss_fn
 
-    def perturb(self, x, y, sticker_size, place):
+    def perturb(self, x, y, sticker_size, place, is_batch=False):
         if self.target:
 
             def loss_fn(*args):
@@ -48,14 +48,22 @@ class PgdSticker:
 
             def loss_fn(*args):
                 return -self.loss_fn(*args)
-
-        adv_images, success, pred_top = self.sticker_pgd_attack(
-            images=x,
-            y=y,
-            loss=loss_fn,
-            sticker_size=sticker_size,
-            place=place,
-        )
+        if is_batch:
+            adv_images, success, pred_top = self.sticker_pgd_attack_with_batch(
+                images=x,
+                y=y,
+                loss=loss_fn,
+                sticker_size=sticker_size,
+                place=place,
+            )
+        else:
+            adv_images, success, pred_top = self.sticker_pgd_attack(
+                images=x,
+                y=y,
+                loss=loss_fn,
+                sticker_size=sticker_size,
+                place=place,
+            )
         return adv_images, success, pred_top
 
     def sticker_pgd_attack(
@@ -87,6 +95,7 @@ class PgdSticker:
             pred = self.model(new_pic)
             pred = pred[0].cpu().detach().numpy()
 
+            # сделать так, чтобы возвращался список успехов. если есть хотя бы один, то закончили подбирать.
             if self.target:
                 success = succsess_metric_top_target(
                     y=y[0],
@@ -132,6 +141,81 @@ class PgdSticker:
 
         return images
 
+    def pgd_step_with_batch(self, images, y, loss_fn, place, sticker_size):
+        images.requires_grad = True
+        outputs = self.model(images)
+
+        self.model.zero_grad()
+        loss = loss_fn(outputs, y)
+        loss.backward()
+        images.requires_grad = False
+
+        adv_images = images - self.alpha * images.grad.sign()
+        eta = Tensor.clamp(adv_images - images, min=-self.eps, max=self.eps)
+
+        for num, (place_i, place_j) in place:
+            sticker = Tensor.clamp(images[num] + eta[num], min=0, max=1)[
+                :,
+                :,
+                place_i : place_i + sticker_size,
+                place_j : place_j + sticker_size,
+            ]
+
+            images[
+                num,
+                :,
+                place_i : place_i + sticker_size,
+                place_j : place_j + sticker_size,
+            ] = sticker
+
+        return images
+
+    def sticker_pgd_attack_with_batch(
+        self,
+        images,
+        y,
+        loss,
+        sticker_size=20,
+        place=(0, 0),
+        top=1, #5,
+    ):
+
+        new_pic = deepcopy(images.data)
+        true_log = self.model(new_pic)
+        true_log = true_log.cpu().detach().numpy()[0]
+        top_lab = np.argsort(true_log)[-1 * top :]
+
+        for i in range(self.iters):
+            new_pic = self.pgd_step_with_batch(
+                images=new_pic,
+                y=y,
+                loss_fn=loss,
+                place=place,
+                sticker_size=sticker_size,
+            )
+
+            pred = self.model(new_pic)
+            pred = pred[0].cpu().detach().numpy()
+
+            # сделать так, чтобы возвращался список успехов. если есть хотя бы один, то закончили подбирать.
+            if self.target:
+                success = succsess_metric_top_target(
+                    y=y[0],
+                    pred=pred,
+                )
+                if success or i == (self.iters - 1):
+                    print(f'iter return {i}')
+                    return new_pic, success, np.argmax(pred)
+
+            else:
+                success = without_top_succsess_metric_top_untarget(
+                    y=y[0],
+                    pred=pred,
+                )
+                if success or i == (self.iters - 1):
+                    print(f'iter return {i}')
+                    return new_pic, success, np.argmax(pred)
+            return new_pic, None, np.argmax(pred)
 
 class SpsaSticker(LinfSPSAAttack):
     """
@@ -439,3 +523,17 @@ def without_top_succsess_metric_top_untarget(y, pred):
     if y != np.argmax(pred):
         succsess = True
     return succsess
+
+
+def get_adv_images_with_batch(images, labels, sticker_size, attack, place, id):
+
+    adv_images, success, pred_top = attack.perturb(
+        x=images, sticker_size=sticker_size, y=labels, place=place
+    )
+    if success:
+        return {
+            'adv_images': adv_images,
+            'success': success,
+            'pred_top': pred_top,
+        }
+    return {'adv_images': adv_images, 'success': success, 'pred_top': pred_top}

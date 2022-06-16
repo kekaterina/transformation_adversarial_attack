@@ -13,7 +13,7 @@ from constant import MODEL_MAPPING, DATA_MAPPING, ADVERSARIAL_IMAGES_MAPPING, \
 
 from main import str2bool
 
-HARD_SIZE_FOR_DEBUGGING = 100
+HARD_SIZE_FOR_DEBUGGING = 10000
 
 
 def parse_arguments():
@@ -247,7 +247,7 @@ def main():
     df = merge_transform_attack_results(transfer_path=OUTPUT_PATH_TRANSFORMATION_CSV,
                                         file_key=file_info['file_key'])
     m = df.merge(transfer_attack_df, on='model')
-
+    print(m)
     create_all_quadric_df(df=m,
                           patch_size=args.patch_scale,
                           model_list=MODEL_KEY_FOR_PROCESSING_RESULTS,

@@ -61,7 +61,7 @@ def printing_success_rate(labels, pred_list, name):
     m = labels[pred_list != labels].shape[0]
     n = labels.shape[0]
     cou = m / n * 100
-    print(f'{name}: succsess rate {m} of {n} ({cou}%)')
+    print(f'{name}: succsess rate {m} of {n} ({cou}%). Accuracy = {(1-m/n) * 100}%')
     return cou
 
 

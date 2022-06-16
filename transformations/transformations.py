@@ -44,13 +44,13 @@ def gauss_transformer(img):
 def get_transformation_choise(shape, transformation_params=TRANSFORMATION_PARAMS):
     scale_trans = np.random.uniform(transformation_params['scale']['min'],
                                     transformation_params['scale']['max'],
-                                    shape)
+                                    10000)
     rotation_trans = np.random.uniform(transformation_params['rotation']['min'],
                                        transformation_params['rotation']['max'],
-                                       shape)
+                                       10000)
     dark_trans = np.random.uniform(transformation_params['dark']['min'],
                                    transformation_params['dark']['max'],
-                                   shape)
+                                   10000)
 
     return {'scale_trans': scale_trans,
             'rotation_trans': rotation_trans,

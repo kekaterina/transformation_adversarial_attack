@@ -82,7 +82,7 @@ def get_adversarial_patch_pictures_by_art(model, x, y, filename='test', patch_sc
 def get_adversarial_patch_pictures_by_custom(model, images, labels, filename,
                                              sticker_size, device='cuda', max_iters=40):
     writer = SummaryWriter(log_dir='output_exp')
-    dataloader = get_dataloader(images, labels, device='cuda', batch_size=1, shuffle=False)
+    dataloader = get_dataloader([images, labels], device='cuda', batch_size=1, shuffle=False)
 
     attack = PgdSticker(model=model,
                         eps=1.,
