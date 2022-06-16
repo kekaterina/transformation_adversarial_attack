@@ -42,7 +42,9 @@ def preprocess_data_short_cbn(image_arr_path, lab_arr_path, renumber=True):
 
 
 def get_dataloader(xs, device, shuffle=True, batch_size=10):
-    xs = [Tensor(e).to(device) for e in xs]
+    xs[0] = Tensor(xs[0]).to(device)
+    xs[1] = LongTensor(xs[1]).to(device)
+    xs[2:] = [LongTensor(e).to(device) for e in xs[2:]]
     dataset = TensorDataset(*xs)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
