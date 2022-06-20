@@ -311,15 +311,18 @@ def attack_step_with_batch(
     im_shape,
     targeted,
     device,
-    output_path,
+#    output_path,
     batch_size,
-    writer: SummaryWriter,
-    prefix: ""
+#    writer: SummaryWriter,
+#    prefix: ""
 ):
     pred_labels = []
     adv_count = 0
     target_labels = []
     adv_images = []
+    all_results_images = []
+    all_results_pred = []
+    all_id_s = []
 
     places = []
     for row in range(0, im_shape[0] - sticker_size, sticker_size):
@@ -329,14 +332,14 @@ def attack_step_with_batch(
     x_s = np.repeat(images, len(places), axis=0)
     y_s = np.repeat(labels, len(places), axis=0)
     id_s = np.repeat(np.arange(0, images.shape[0], 1), len(places), axis=0)
-    places = places*labels.shape[0]
+    places = places * labels.shape[0]
 
     dataloader = get_dataloader([x_s, y_s, places, id_s], device=device, batch_size=batch_size)
 
     for image_i, (x, y, place, id) in enumerate(dataloader):
         if targeted:
             for num, e in enumerate(x):
-                y_e = get_target_label(model, e, acceptable_labels, device=device)
+                y_e = get_target_label(model, e, acceptable_labels)
                 target_labels.append(y_e[num].cpu().detach().numpy()[0])
                 y_e = y_e.to(device)
                 y[num] = y_e
@@ -344,34 +347,17 @@ def attack_step_with_batch(
             images=x,
             labels=y,
             sticker_size=sticker_size,
-            im_shape=(im_shape, im_shape),
             attack=attack,
             place=place,
             id=id,
         )
-        success = result['success']
-        pred = result['pred_top']
-        n = 10
-        if image_i < n:
-            writer.add_image(f"test_image/{prefix}/im={image_i}", result['adv_images'][0])
-        adv_images.append(result['adv_images'].cpu().detach().numpy()[0])# for 4-dimensional weight [64, 3, 1, 1], but got 5-dimensional input of size [1, 1, 3, 224, 224] instead
+        all_results_images.append(result['adv_images'].cpu().detach().numpy())
+        all_results_pred.append(result['pred_top'])
+        all_id_s.append(id.cpu().detach().numpy())
 
-        if success:
-            print(f'Image №{image_i + 1} successfully attacked')
-            adv_count += 1
-        else:
-            print(f'Image №{image_i + 1} UNsuccessfully attacked')
-
-        pred_labels.append(pred)
-
-    try:
-        np.save(output_path, adv_images)
-    except:
-        output_path = f'exception_saving_{time.time()}.npy'
-        print(f"Exception saving images in {output_path}")
-        np.save(output_path, adv_images)
-    print(f'====>: {adv_count} of {image_i} pictures changed label in attack')
-    return pred_labels, target_labels, adv_images
+        np.save('all_results_images', all_results_images)
+        np.save('all_results_pred', all_results_pred)
+        np.save('all_id_s', all_id_s)
 
 
 def main():
