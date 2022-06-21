@@ -416,7 +416,12 @@ def attack_step_with_batch(
                                id_s=all_id_s,
                                output_path=output_path)
 
+    successes = labels == res['preds']
+    adv_count = successes[successes==False].shape[0]
+    print(f'====>: {adv_count} of {images.shape[0]} pictures changed label in attack')
+
     return res
+
 
 def main():
     args = parse_arguments()
