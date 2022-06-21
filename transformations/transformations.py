@@ -33,7 +33,7 @@ def dark_image(image, delta):
 
 
 def gauss_transformer(img):
-    gaussian_trans = np.random.normal(0.0, 0.1, img.size)
+    gaussian_trans = np.random.normal(0.0, 1.0, img.size) # 0-0.1
 
     gaussian_trans = gaussian_trans.reshape(img.shape[0],
                                             img.shape[1],
