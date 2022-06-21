@@ -311,10 +311,10 @@ def attack_step_with_batch(
     im_shape,
     targeted,
     device,
-#    output_path,
+    output_path,
     batch_size,
-#    writer: SummaryWriter,
-#    prefix: ""
+    writer: SummaryWriter,
+    prefix: ""
 ):
     pred_labels = []
     adv_count = 0
@@ -355,10 +355,11 @@ def attack_step_with_batch(
         all_results_pred.append(result['pred_top'])
         all_id_s.append(id.cpu().detach().numpy())
 
-        np.save('all_results_images_new', all_results_images)
-        np.save('all_results_pred_new', all_results_pred)
-        np.save('all_id_s_new', all_id_s)
+        np.save(f'{output_path}/all_results_images_new', all_results_images)
+        np.save(f'{output_path}/all_results_pred_new', all_results_pred)
+        np.save(f'{output_path}/all_id_s_new', all_id_s)
         torch.cuda.empty_cache()
+
 
 def main():
     args = parse_arguments()

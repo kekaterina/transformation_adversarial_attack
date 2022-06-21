@@ -109,6 +109,36 @@ def get_adversarial_patch_pictures_by_custom(model, images, labels, filename,
             'target_labels': target_labels}
 
 
+def get_adversarial_patch_pictures_by_custom_with_batch(model, images, labels, filename,
+                                             sticker_size, device='cuda', max_iters=40):
+    writer = SummaryWriter(log_dir='output_exp')
+    dataloader = get_dataloader([images, labels], device='cuda', batch_size=1, shuffle=False)
+
+    attack = PgdSticker(model=model,
+                        eps=1.,
+                        alpha=0.8, #2/255,
+                        iters=max_iters,
+                        target=False,
+                        )
+    pred_labels, target_labels, adv_images = attack_step(
+        model=model,
+        attack=attack,
+        dataloader=dataloader,
+        acceptable_labels=None,
+        sticker_size=sticker_size,
+        im_shape=224,
+        targeted=False,
+        device=device,
+        output_path=filename,
+        writer=writer,
+        prefix='',
+    )
+
+    return {'adv_images': adv_images,
+            'pred_labels': pred_labels,
+            'target_labels': target_labels}
+
+
 def predict_one_image(image, model, add_dimension=False):
     if add_dimension:
         image = np.expand_dims(image, axis=0)

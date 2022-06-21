@@ -10,7 +10,8 @@ from torch import load as torch_load
 import numpy as np
 
 from generate_adversarial_images import get_adversarial_patch_pictures_by_art, \
-    get_adversarial_patch_pictures_by_custom
+    get_adversarial_patch_pictures_by_custom, \
+    get_adversarial_patch_pictures_by_custom_with_batch
 from transformations.experiments import custom_seq_transformation
 from constant import MODEL_MAPPING, DATA_MAPPING, ADVERSARIAL_IMAGES_MAPPING, \
     OUTPUT_PATH, OUTPUT_PATH_TRANSFORMATION_IMAGE, PREFIX_NAME, RANDOM_STATE
@@ -236,7 +237,9 @@ def main():
                                                      sticker_size=args.patch_scale,
                                                      device='cuda', max_iters=args.max_iters)
         if args.type_attack == 'batch_custom':
-            pass
+            print('Generation adversarial pictures with batch!')
+            get_adversarial_patch_pictures_by_custom_with_batch
+
 
     if args.mode == 'transformation':
         print('Transformation images')
