@@ -301,6 +301,52 @@ def attack_step(
     print(f'====>: {adv_count} of {image_i} pictures changed label in attack')
     return pred_labels, target_labels, adv_images
 
+
+def get_array_with_replecate_for_batch(images, labels, sticker_size, im_shape):
+    places = []
+    for row in range(0, im_shape[0] - sticker_size, sticker_size):
+        for col in range(0, im_shape[1] - sticker_size, sticker_size):
+            place = [row, col]
+            places.append(place)
+    x_s = np.repeat(images, len(places), axis=0)
+    y_s = np.repeat(labels, len(places), axis=0)
+    id_s = np.repeat(np.arange(0, images.shape[0], 1), len(places), axis=0)
+    places = places * labels.shape[0]
+
+    return {'x_s': x_s,
+            'y_s': y_s,
+            'id_s': id_s,
+            'places': places}
+
+
+def get_unbatching_array(images, true_lab, pred_lab, id_s, output_path):
+    unique_labels = np.unique(id_s)
+
+    res_images = []
+    res_preds = []
+    res_ids = []
+    for idx in unique_labels:
+        ind = np.where(id_s == idx)[0]
+
+        res_ind = ind[pred_lab[ind] != true_lab[idx]]
+        if res_ind.shape[0] == 0:
+            res_ids.append(id_s[ind[0]])
+            res_images.append(images[ind[0]])
+            res_preds.append(pred_lab[ind[0]])
+        else:
+            res_ids.append(id_s[res_ind[0]])
+            res_images.append(images[res_ind[0]])
+            res_preds.append(pred_lab[res_ind[0]])
+
+    np.save(f'{output_path}/images_unbatching', np.array(res_images))
+    np.save(f'{output_path}/preds_unbatching', np.array(res_preds))
+    np.save(f'{output_path}/ids_unbatching', np.array(res_ids))
+
+    return {'id_s': res_ids,
+             'images': res_images,
+             'preds': res_preds}
+
+
 def attack_step_with_batch(
     model,
     attack,
@@ -324,15 +370,14 @@ def attack_step_with_batch(
     all_results_pred = []
     all_id_s = []
 
-    places = []
-    for row in range(0, im_shape[0] - sticker_size, sticker_size):
-        for col in range(0, im_shape[1] - sticker_size, sticker_size):
-            place = [row, col]
-            places.append(place)
-    x_s = np.repeat(images, len(places), axis=0)
-    y_s = np.repeat(labels, len(places), axis=0)
-    id_s = np.repeat(np.arange(0, images.shape[0], 1), len(places), axis=0)
-    places = places * labels.shape[0]
+    batch_arrays = get_array_with_replecate_for_batch(images=images,
+                                                      labels=labels,
+                                                      sticker_size=sticker_size,
+                                                      im_shape=im_shape)
+    x_s = batch_arrays['x_s']
+    y_s = batch_arrays['y_s']
+    places = batch_arrays['places']
+    id_s = batch_arrays['id_s']
 
     dataloader = get_dataloader([x_s, y_s, places, id_s], device=device, batch_size=batch_size, shuffle=False)
 
@@ -351,15 +396,26 @@ def attack_step_with_batch(
             place=place,
             id=id,
         )
+
         all_results_images.append(result['adv_images'].cpu().detach().numpy())
         all_results_pred.append(result['pred_top'])
         all_id_s.append(id.cpu().detach().numpy())
+
+        all_results_images = np.concatenate(all_results_images)
+        all_results_pred = np.concatenate(all_results_pred)
+        all_id_s = np.concatenate(all_id_s)
 
         np.save(f'{output_path}/all_results_images_new', all_results_images)
         np.save(f'{output_path}/all_results_pred_new', all_results_pred)
         np.save(f'{output_path}/all_id_s_new', all_id_s)
         torch.cuda.empty_cache()
 
+        res = get_unbatching_array(images=all_results_images,
+                                   true_lab=labels,
+                                   pred_lab=all_results_pred,
+                                   id_s=all_id_s,
+                                   output_path=output_path)
+        return res
 
 def main():
     args = parse_arguments()

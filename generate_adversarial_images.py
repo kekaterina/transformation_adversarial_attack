@@ -10,7 +10,7 @@ import numpy as np
 from sklearn import metrics
 
 from attacks import PgdSticker
-from main import attack_step
+from main import attack_step, attack_step_with_batch
 from torch.utils.tensorboard import SummaryWriter
 from torch import Tensor
 
@@ -120,10 +120,11 @@ def get_adversarial_patch_pictures_by_custom_with_batch(model, images, labels, f
                         iters=max_iters,
                         target=False,
                         )
-    pred_labels, target_labels, adv_images = attack_step(
+
+    res = attack_step_with_batch(
         model=model,
         attack=attack,
-        dataloader=dataloader,
+        images=images,
         acceptable_labels=None,
         sticker_size=sticker_size,
         im_shape=224,
@@ -134,9 +135,7 @@ def get_adversarial_patch_pictures_by_custom_with_batch(model, images, labels, f
         prefix='',
     )
 
-    return {'adv_images': adv_images,
-            'pred_labels': pred_labels,
-            'target_labels': target_labels}
+    return res
 
 
 def predict_one_image(image, model, add_dimension=False):
