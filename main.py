@@ -401,6 +401,8 @@ def attack_step_with_batch(
         all_results_pred.append(result['pred_top'])
         all_id_s.append(id.cpu().detach().numpy())
 
+    print(len(all_results_pred))
+    print(all_results_pred[0].shape, all_results_pred[-1].shape)
     all_results_images = np.concatenate(all_results_images, axis=0)
     all_results_pred = np.concatenate(all_results_pred, axis=0)
     all_id_s = np.concatenate(all_id_s, axis=0)
