@@ -238,7 +238,13 @@ def main():
                                                      device='cuda', max_iters=args.max_iters)
         if args.type_attack == 'batch_custom':
             print('Generation adversarial pictures with batch!')
-            get_adversarial_patch_pictures_by_custom_with_batch
+            get_adversarial_patch_pictures_by_custom_with_batch(model=model,
+                                                                images=X_test[:args.count_images_from_first],
+                                                                labels=y_test[:args.count_images_from_first],
+                                                                filename=args.filename,
+                                                                sticker_size=args.patch_scale,
+                                                                device='cuda',
+                                                                max_iters=args.max_iters)
 
 
     if args.mode == 'transformation':
