@@ -401,20 +401,21 @@ def attack_step_with_batch(
         all_results_pred.append(result['pred_top'])
         all_id_s.append(id.cpu().detach().numpy())
 
-        all_results_images = np.concatenate(all_results_images)
-        all_results_pred = np.concatenate(all_results_pred)
-        all_id_s = np.concatenate(all_id_s)
+    all_results_images = np.concatenate(all_results_images)
+    all_results_pred = np.concatenate(all_results_pred)
+    all_id_s = np.concatenate(all_id_s)
 
-        np.save(f'{output_path}/all_results_images_new', all_results_images)
-        np.save(f'{output_path}/all_results_pred_new', all_results_pred)
-        np.save(f'{output_path}/all_id_s_new', all_id_s)
-        torch.cuda.empty_cache()
+    np.save(f'{output_path}/all_results_images_new', all_results_images)
+    np.save(f'{output_path}/all_results_pred_new', all_results_pred)
+    np.save(f'{output_path}/all_id_s_new', all_id_s)
+    torch.cuda.empty_cache()
 
-        res = get_unbatching_array(images=all_results_images,
-                                   true_lab=labels,
-                                   pred_lab=all_results_pred,
-                                   id_s=all_id_s,
-                                   output_path=output_path)
+    res = get_unbatching_array(images=all_results_images,
+                               true_lab=labels,
+                               pred_lab=all_results_pred,
+                               id_s=all_id_s,
+                               output_path=output_path)
+
         return res
 
 def main():
