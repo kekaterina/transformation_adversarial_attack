@@ -1,5 +1,3 @@
-import sys
-
 from sklearn.utils import shuffle
 import torch
 

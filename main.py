@@ -359,13 +359,8 @@ def attack_step_with_batch(
     device,
     output_path,
     batch_size,
-    writer: SummaryWriter,
-    prefix: ""
 ):
-    pred_labels = []
-    adv_count = 0
     target_labels = []
-    adv_images = []
     all_results_images = []
     all_results_pred = []
     all_id_s = []
@@ -381,7 +376,7 @@ def attack_step_with_batch(
 
     dataloader = get_dataloader([x_s, y_s, places, id_s], device=device, batch_size=batch_size, shuffle=False)
 
-    for image_i, (x, y, place, id) in enumerate(dataloader):
+    for image_i, (x, y, place, id_) in enumerate(dataloader):
         if targeted:
             for num, e in enumerate(x):
                 y_e = get_target_label(model, e, acceptable_labels)
@@ -394,16 +389,13 @@ def attack_step_with_batch(
             sticker_size=sticker_size,
             attack=attack,
             place=place,
-            id=id,
+            id=id_,
         )
 
         all_results_images.append(result['adv_images'].cpu().detach().numpy())
         all_results_pred.append(result['pred_top'][0])
-        all_id_s.append(id.cpu().detach().numpy())
+        all_id_s.append(id_.cpu().detach().numpy())
 
-    print(len(all_results_pred))
-    print(result['pred_top'])
-    print(all_results_pred[0].shape, all_results_pred[-1].shape)
     all_results_images = np.concatenate(all_results_images, axis=0)
     all_results_pred = np.concatenate(all_results_pred, axis=0)
     all_id_s = np.concatenate(all_id_s, axis=0)

@@ -1,5 +1,4 @@
 from main import attack_step_with_batch
-from torch import Tensor, FloatTensor, LongTensor, device, cuda, no_grad
 import time
 import torchvision
 from torch import load as torch_load
