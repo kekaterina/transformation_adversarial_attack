@@ -127,7 +127,7 @@ def get_adversarial_patch_pictures_by_custom_with_batch(model, images, labels, f
         labels=labels,
         acceptable_labels=None,
         sticker_size=sticker_size,
-        im_shape=224,
+        im_shape=(224, 224),
         targeted=False,
         device=device,
         output_path=filename,
