@@ -171,6 +171,12 @@ def parse_arguments():
         default=False,
         help='',
     )
+    parser.add_argument(
+        '--batch-size',
+        type=int,
+        default=1,
+        help='',
+    )
 
     return parser.parse_args()
 
@@ -244,7 +250,7 @@ def main():
                                                                 filename=args.filename,
                                                                 sticker_size=args.patch_scale,
                                                                 device='cuda',
-                                                                batch_size=400,
+                                                                batch_size=args.batch_size,
                                                                 max_iters=args.max_iters)
 
 
