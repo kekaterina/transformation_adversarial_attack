@@ -244,6 +244,7 @@ def main():
                                                                 filename=args.filename,
                                                                 sticker_size=args.patch_scale,
                                                                 device='cuda',
+                                                                batch_size=400,
                                                                 max_iters=args.max_iters)
 
 
