@@ -334,7 +334,7 @@ def attack_step_with_batch(
     id_s = np.repeat(np.arange(0, images.shape[0], 1), len(places), axis=0)
     places = places * labels.shape[0]
 
-    dataloader = get_dataloader([x_s, y_s, places, id_s], device=device, batch_size=batch_size)
+    dataloader = get_dataloader([x_s, y_s, places, id_s], device=device, batch_size=batch_size, shuffle=False)
 
     for image_i, (x, y, place, id) in enumerate(dataloader):
         if targeted:
@@ -355,10 +355,10 @@ def attack_step_with_batch(
         all_results_pred.append(result['pred_top'])
         all_id_s.append(id.cpu().detach().numpy())
 
-        np.save('all_results_images', all_results_images)
-        np.save('all_results_pred', all_results_pred)
-        np.save('all_id_s', all_id_s)
-
+        np.save('all_results_images_new', all_results_images)
+        np.save('all_results_pred_new', all_results_pred)
+        np.save('all_id_s_new', all_id_s)
+        torch.cuda.empty_cache()
 
 def main():
     args = parse_arguments()

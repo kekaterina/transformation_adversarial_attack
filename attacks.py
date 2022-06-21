@@ -9,7 +9,7 @@ import numpy as np
 
 
 def get_adv_images(images, labels, sticker_size, im_shape, attack, shift=3):
-    # sticker_size*shift, sticker_size*shift это надо потом добавить, пока что результаты без шифта получены
+    #sticker_size*shift, sticker_size*shift это надо потом добавить, пока что результаты без шифта получены
     for row in range(0, im_shape[0] - sticker_size, sticker_size):
         for col in range(0, im_shape[1] - sticker_size, sticker_size):
             place = (row, col)
@@ -67,20 +67,20 @@ class PgdSticker:
         return adv_images, success, pred_top
 
     def sticker_pgd_attack(
-            self,
-            images,
-            y,
-            loss,
-            sticker_size=20,
-            place=(0, 0),
-            top=1,  # 5,
+        self,
+        images,
+        y,
+        loss,
+        sticker_size=20,
+        place=(0, 0),
+        top=1, #5,
     ):
         place_i, place_j = place
 
         new_pic = deepcopy(images.data)
         true_log = self.model(new_pic)
         true_log = true_log.cpu().detach().numpy()[0]
-        top_lab = np.argsort(true_log)[-1 * top:]
+        top_lab = np.argsort(true_log)[-1 * top :]
 
         for i in range(self.iters):
             new_pic = self.pgd_step(
@@ -126,17 +126,17 @@ class PgdSticker:
         adv_images = images - self.alpha * images.grad.sign()
         eta = Tensor.clamp(adv_images - images, min=-self.eps, max=self.eps)
         sticker = Tensor.clamp(images + eta, min=0, max=1)[
-                  :,
-                  :,
-                  place_i: place_i + sticker_size,
-                  place_j: place_j + sticker_size,
-                  ]
+            :,
+            :,
+            place_i : place_i + sticker_size,
+            place_j : place_j + sticker_size,
+        ]
 
         images[
-        :,
-        :,
-        place_i: place_i + sticker_size,
-        place_j: place_j + sticker_size,
+            :,
+            :,
+            place_i : place_i + sticker_size,
+            place_j : place_j + sticker_size,
         ] = sticker
 
         return images
@@ -158,37 +158,38 @@ class PgdSticker:
             print(num)
             place_i = place_coor[0].cpu().numpy()
             place_j = place_coor[1].cpu().numpy()
-
+            
             print(images[num].shape, place_i, place_j)
             sticker = Tensor.clamp(images[num] + eta[num], min=0, max=1)[
-                      :,
-                      place_i: place_i + sticker_size,
-                      place_j: place_j + sticker_size,
-                      ]
+                :,
+                place_i : place_i + sticker_size,
+                place_j : place_j + sticker_size,
+            ]
 
             images[
-            num,
-            :,
-            place_i: place_i + sticker_size,
-            place_j: place_j + sticker_size,
+                num,
+                :,
+                place_i : place_i + sticker_size,
+                place_j : place_j + sticker_size,
             ] = sticker
 
         return images
 
     def sticker_pgd_attack_with_batch(
-            self,
-            images,
-            y,
-            loss,
-            sticker_size=20,
-            place=(0, 0),
-            top=1,  # 5,
+        self,
+        images,
+        y,
+        loss,
+        sticker_size=20,
+        place=(0, 0),
+        top=1, #5,
     ):
 
         new_pic = deepcopy(images.data)
         true_log = self.model(new_pic)
         true_log = true_log.cpu().detach().numpy()[0]
-        top_lab = np.argsort(true_log)[-1 * top:]
+        top_lab = np.argsort(true_log)[-1 * top :]
+        preds = []
 
         for i in range(self.iters):
             new_pic = self.pgd_step_with_batch(
@@ -199,29 +200,29 @@ class PgdSticker:
                 sticker_size=sticker_size,
             )
 
-            pred = self.model(new_pic)
-            pred = pred[0].cpu().detach().numpy()
+        pred = self.model(new_pic)
+        pred = pred.cpu().detach().numpy()
+        preds.append(np.argmax(pred, axis=1))
 
             # сделать так, чтобы возвращался список успехов. если есть хотя бы один, то закончили подбирать.
-            if self.target:
-                success = succsess_metric_top_target(
-                    y=y[0],
-                    pred=pred,
-                )
-                if success or i == (self.iters - 1):
-                    print(f'iter return {i}')
-                    return new_pic, success, np.argmax(pred)
+            #if self.target:
+            #    success = succsess_metric_top_target(
+            #        y=y[0],
+            #        pred=pred,
+            #    )
+            #    if success or i == (self.iters - 1):
+            #        print(f'iter return {i}')
+            #        return new_pic, success, np.argmax(pred)
 
-            else:
-                success = without_top_succsess_metric_top_untarget(
-                    y=y[0],
-                    pred=pred,
-                )
-                if success or i == (self.iters - 1):
-                    print(f'iter return {i}')
-                    return new_pic, success, np.argmax(pred)
-            return new_pic, None, np.argmax(pred)
-
+            #else:
+            #    success = without_top_succsess_metric_top_untarget(
+            #        y=y[0],
+            #        pred=pred,
+            #    )
+            #    if success or i == (self.iters - 1):
+            #        print(f'iter return {i}')
+            #        return new_pic, success, np.argmax(pred)
+        return new_pic, None, preds
 
 class SpsaSticker(LinfSPSAAttack):
     """
@@ -235,20 +236,20 @@ class SpsaSticker(LinfSPSAAttack):
     """
 
     def __init__(
-            self,
-            predict,
-            eps,
-            delta=0.1,
-            lr=0.01,
-            nb_iter=40,
-            nb_sample=128,
-            max_batch_size=64,
-            targeted=False,
-            loss_fn=None,
-            clip_min=0.0,
-            clip_max=1.0,
-            classic=False,
-            alpha=0.05,
+        self,
+        predict,
+        eps,
+        delta=0.1,
+        lr=0.01,
+        nb_iter=40,
+        nb_sample=128,
+        max_batch_size=64,
+        targeted=False,
+        loss_fn=None,
+        clip_min=0.0,
+        clip_max=1.0,
+        classic=False,
+        alpha=0.05,
     ):
         super().__init__(
             predict,
@@ -308,7 +309,7 @@ class SpsaSticker(LinfSPSAAttack):
         return adv_images, success, pred
 
     def spsa_perturb(
-            self, loss_fn, x, y, sticker_size=100, place=(0, 0), top=1
+        self, loss_fn, x, y, sticker_size=100, place=(0, 0), top=1
     ):
         """Perturbs the input `x` based on SPSA attack.
         :param predict: predict function (single argument: input).
@@ -329,25 +330,25 @@ class SpsaSticker(LinfSPSAAttack):
         place_i, place_j = place
 
         sticker = x[
-                  :,
-                  :,
-                  place_i: place_i + sticker_size,
-                  place_j: place_j + sticker_size,
-                  ]
+            :,
+            :,
+            place_i : place_i + sticker_size,
+            place_j : place_j + sticker_size,
+        ]
         dx = torch.zeros_like(sticker)
         optimizer = torch.optim.Adam([dx], lr=self.lr)
         new_x = deepcopy(
             x.data[
-            :,
-            :,
-            place_i: place_i + sticker_size,
-            place_j: place_j + sticker_size,
+                :,
+                :,
+                place_i : place_i + sticker_size,
+                place_j : place_j + sticker_size,
             ]
         )
         new_pic = deepcopy(x.data)
         true_log = self.predict(new_pic)
         true_log = true_log.cpu().detach().numpy()[0]
-        ind = np.argpartition(true_log, -1 * top)[-1 * top:]
+        ind = np.argpartition(true_log, -1 * top)[-1 * top :]
         top_lab = ind[np.argsort(true_log[ind])]
 
         for it in range(self.nb_iter):
@@ -384,15 +385,15 @@ class SpsaSticker(LinfSPSAAttack):
                     return new_pic, success, np.argmax(pred)
 
     def spsa_step(
-            self,
-            new_x,
-            new_pic,
-            y,
-            optimizer,
-            loss_fn,
-            place_i,
-            place_j,
-            sticker_size,
+        self,
+        new_x,
+        new_pic,
+        y,
+        optimizer,
+        loss_fn,
+        place_i,
+        place_j,
+        sticker_size,
     ):
         optimizer.zero_grad()
         grad = spsa_grad(
@@ -410,24 +411,24 @@ class SpsaSticker(LinfSPSAAttack):
         new_x = Tensor.clamp(new_x, self.clip_min, self.clip_max)
 
         new_pic[
-        :,
-        :,
-        place_i: place_i + sticker_size,
-        place_j: place_j + sticker_size,
+            :,
+            :,
+            place_i : place_i + sticker_size,
+            place_j : place_j + sticker_size,
         ] = new_x
 
         return new_pic, new_x
 
     def classic_spsa_step(
-            self,
-            dx,
-            x,
-            y,
-            optimizer,
-            loss_fn,
-            place_i,
-            place_j,
-            sticker_size,
+        self,
+        dx,
+        x,
+        y,
+        optimizer,
+        loss_fn,
+        place_i,
+        place_j,
+        sticker_size,
     ):
         optimizer.zero_grad()
         dx.grad = spsa_grad(
@@ -445,24 +446,24 @@ class SpsaSticker(LinfSPSAAttack):
 
         tmp = deepcopy(
             dx[
-            :,
-            :,
-            place_i: place_i + sticker_size,
-            place_j: place_j + sticker_size,
+                :,
+                :,
+                place_i : place_i + sticker_size,
+                place_j : place_j + sticker_size,
             ]
         )
         dx = torch.zeros_like(dx)
         dx[
-        :,
-        :,
-        place_i: place_i + sticker_size,
-        place_j: place_j + sticker_size,
+            :,
+            :,
+            place_i : place_i + sticker_size,
+            place_j : place_j + sticker_size,
         ] = tmp
 
         return x + dx
 
     def classic_spsa_perturb(
-            self, loss_fn, x, y, sticker_size=100, place=(0, 0), top=1
+        self, loss_fn, x, y, sticker_size=100, place=(0, 0), top=1
     ):
         place_i, place_j = place
         dx = torch.zeros_like(x)
@@ -471,7 +472,7 @@ class SpsaSticker(LinfSPSAAttack):
 
         true_log = self.predict(x)
         true_log = true_log.cpu().detach().numpy()[0]
-        ind = np.argpartition(true_log, -1 * top)[-1 * top:]
+        ind = np.argpartition(true_log, -1 * top)[-1 * top :]
         top_lab = ind[np.argsort(true_log[ind])]
 
         for it in range(self.nb_iter):
@@ -515,7 +516,7 @@ def succsess_metric_top_target(y, pred):
 
 def success_metric_top_untarget(pred, top_lab, top=1):
     true_label = top_lab[-1]
-    ind = np.argpartition(pred, -1 * top)[-1 * top:]
+    ind = np.argpartition(pred, -1 * top)[-1 * top :]
     pred_top = ind[np.argsort(pred[ind])]
     success = True
 
@@ -532,10 +533,11 @@ def without_top_succsess_metric_top_untarget(y, pred):
 
 
 def get_adv_images_with_batch(images, labels, sticker_size, attack, place, id):
+
     adv_images, success, pred_top = attack.perturb(
         x=images, sticker_size=sticker_size, y=labels, place=place, is_batch=True,
     )
-    # if success:
+    #if success:
     #    return {
     #        'adv_images': adv_images,
     #        'success': success,

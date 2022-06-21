@@ -37,7 +37,7 @@ def parse_arguments():
     parser.add_argument(
         '--type-attack',
         type=str,
-        choices=['custom', 'art'],
+        choices=['custom', 'art', 'batch_custom'],
         default='art',
         help='experiment type of attack',
     )
@@ -235,6 +235,8 @@ def main():
                                                      filename=args.filename,
                                                      sticker_size=args.patch_scale,
                                                      device='cuda', max_iters=args.max_iters)
+        if args.type_attack == 'batch_custom':
+            pass
 
     if args.mode == 'transformation':
         print('Transformation images')
