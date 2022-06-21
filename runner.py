@@ -247,7 +247,7 @@ def main():
             get_adversarial_patch_pictures_by_custom_with_batch(model=model,
                                                                 images=X_test[:args.count_images_from_first],
                                                                 labels=y_test[:args.count_images_from_first],
-                                                                filename=args.filename,
+                                                                filename=args.output_path,
                                                                 sticker_size=args.patch_scale,
                                                                 device='cuda',
                                                                 batch_size=args.batch_size,
