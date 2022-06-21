@@ -416,7 +416,7 @@ def attack_step_with_batch(
                                id_s=all_id_s,
                                output_path=output_path)
 
-        return res
+    return res
 
 def main():
     args = parse_arguments()
