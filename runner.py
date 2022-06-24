@@ -1,3 +1,5 @@
+import sys
+
 from sklearn.utils import shuffle
 import torch
 
@@ -175,7 +177,18 @@ def parse_arguments():
         default=1,
         help='',
     )
-
+    parser.add_argument(
+        '--first-index',
+        type=int,
+        default=0,
+        help='',
+    )
+    parser.add_argument(
+        '--number-for-output',
+        type=int,
+        default=0,
+        help='',
+    )
     return parser.parse_args()
 
 
@@ -243,13 +256,16 @@ def main():
         if args.type_attack == 'batch_custom':
             print('Generation adversarial pictures with batch!')
             get_adversarial_patch_pictures_by_custom_with_batch(model=model,
-                                                                images=X_test[:args.count_images_from_first],
-                                                                labels=y_test[:args.count_images_from_first],
+                                                                images=X_test[
+                                                                    args.first_index:args.first_index + args.count_images_from_first],
+                                                                labels=y_test[
+                                                                    args.first_index:args.first_index + args.count_images_from_first],
                                                                 filename=args.output_path,
                                                                 sticker_size=args.patch_scale,
                                                                 device='cuda',
                                                                 batch_size=args.batch_size,
-                                                                max_iters=args.max_iters)
+                                                                max_iters=args.max_iters, 
+                                                                number_for_output=args.number_for_output)
 
 
     if args.mode == 'transformation':

@@ -1,5 +1,6 @@
 from preprocess import get_dataloader
 
+from art.attacks.evasion import AdversarialPatchPyTorch
 from art.estimators.classification import PyTorchClassifier
 
 from torch.nn import CrossEntropyLoss
@@ -109,7 +110,8 @@ def get_adversarial_patch_pictures_by_custom(model, images, labels, filename,
 
 
 def get_adversarial_patch_pictures_by_custom_with_batch(model, images, labels, filename,
-                                             sticker_size, device='cuda', max_iters=40, batch_size=400):
+                                             sticker_size, device='cuda', max_iters=40, batch_size=400, number_for_output=0):
+    writer = SummaryWriter(log_dir='output_exp')
 
     attack = PgdSticker(model=model,
                         eps=1.,
@@ -129,7 +131,10 @@ def get_adversarial_patch_pictures_by_custom_with_batch(model, images, labels, f
         targeted=False,
         device=device,
         output_path=filename,
+        writer=writer,
         batch_size=batch_size,
+        num=number_for_output,
+        prefix='',
     )
 
     return res

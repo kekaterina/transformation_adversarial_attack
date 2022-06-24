@@ -4,12 +4,12 @@ from torchvision.models import resnet18
 from bagnet import ClippedBagNet
 
 
-MODEL_MAPPING = {'resnet': '/dump/ekurdenkova/article_data_dump/resnet18_10_classes_state_dict.pth',
-                 'cbn': '/dump/ekurdenkova/article_data_dump/cbn_10_classes_state_dict.pth',
-                 'adv_cbn': '/dump/ekurdenkova/article_data_dump/adv_cbn_10_classes_state_dict.pth',
-                 'cbn_patch': '/dump/ekurdenkova/article_data_dump/cbn_10_classes_state_dict.pth',
-                 'resnet_patch': '/dump/ekurdenkova/article_data_dump/resnet18_10_classes_state_dict.pth',
-                 'adv_cbn_patch': '/dump/ekurdenkova/article_data_dump/adv_cbn_10_classes_state_dict.pth',}
+MODEL_MAPPING = {'resnet': '../../models/resnet18_10_classes_state_dict.pth',
+                 'cbn': '../../models/cbn_10_classes_state_dict.pth',
+                 'adv_cbn': '../../models/adv_cbn_10_classes_state_dict.pth',
+                 'cbn_patch': '../../models/cbn_10_classes_state_dict.pth',
+                 'resnet_patch': '../../models/resnet18_10_classes_state_dict.pth',
+                 'adv_cbn_patch': '../../models/adv_cbn_10_classes_state_dict.pth',}
 
 
 CUSTOM_MODEL_LOAD_PARAMS = {
@@ -70,10 +70,10 @@ CUSTOM_MODEL_LOAD_PARAMS = {
 }
 
 
-DATA_MAPPING = {'images': '/dump/ekurdenkova/lab/images_data_dump_10_class_1000_pic.npy',
-                'labels': '/dump/ekurdenkova/lab/res_yys_10_class_1000_pic.npy',
-                'test_images': '/dump/ekurdenkova/lab/images_test_part_imagenet_10_classes_1000_pic.npy',
-                'test_labels': '/dump/ekurdenkova/lab/labels_test_part_imagenet_10_classes_1000_pic.npy', }
+DATA_MAPPING = {'images': '../../my_imagenet/images_data_dump_10_class_1000_pic.npy',
+                'labels': '../../my_imagenet/res_yys_10_class_1000_pic.npy',
+                'test_images': '../../my_imagenet/images_test_part_imagenet_10_classes_1000_pic.npy',
+                'test_labels': '../../my_imagenet/labels_test_part_imagenet_10_classes_1000_pic.npy', }
 
 
 ADVERSARIAL_IMAGES_MAPPING = {
