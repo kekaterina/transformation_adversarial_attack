@@ -225,12 +225,12 @@ def get_simple_heatmap(model, img, true_label, pred_label):
     return {'heat_true': heat2_true, 'heat_pred': heat2_pred}
 
 
-def plot_cool_heatmap(model_cut, img, true_label, pred_label,
+def plot_cool_heatmap(model_cut, img, true_label, pred_label, pred_label_bagnet,
                       filename='default_pic.png',
                       short_mapping_dict=SHORT_MAPPING_DICT):
 
     clipped_heatmap = get_clipped_heatmap(model_cut, img, true_label, pred_label)
-    simple_heatmap = get_simple_heatmap(model_cut, img, true_label, pred_label)
+    simple_heatmap = get_simple_heatmap(model_cut, img, true_label, pred_label_bagnet)
     pixel_img = cv2.resize(np.moveaxis(img[0], 0, 2), dsize=(24, 24))
     original_img = np.moveaxis(img[0], 0, 2)
 
@@ -250,7 +250,7 @@ def plot_cool_heatmap(model_cut, img, true_label, pred_label,
     a = fig.add_subplot(2, 3, 3)
     an = plt.imshow(simple_heatmap['heat_pred'], vmin=vmin_cbn, vmax=vmax_cbn)
     plt.colorbar(an, shrink=0.8)
-    plt.title(f"Bagnet Heat Map: predict class {short_mapping_dict[pred_label]}")
+    plt.title(f"Bagnet Heat Map: predict class {short_mapping_dict[pred_label_bagnet]}")
 
     a = fig.add_subplot(2, 3, 4)
     an = plt.imshow(pixel_img)
