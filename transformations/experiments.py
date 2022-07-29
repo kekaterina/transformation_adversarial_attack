@@ -19,7 +19,7 @@ SHORT_MAPPING_DICT = {5: 'loaf',
                       1: 'bassoon',
                       2: 'dog/rig',
                       3: 'lizard',
-                      7: 'SaintBernard,',
+                      7: 'SaintBernard',
                       0: 'boa',
                       8: 'space/rockets'}
 
@@ -183,17 +183,17 @@ def show_images(images, patch_images, true_lab, pred_lab,
             break
         f.add_subplot(n // col, 2 * col, i + 1)
         plt.imshow(images[i // 2])
-        plt.title(f'True label: {short_mapping_dict[true_lab[i // 2]]},\n'
-                  f'predict label: {short_mapping_dict[pred_lab[i // 2]]}',
-                  fontdict={'fontsize': 8, 'fontweight': 'medium'})
+        plt.title(f'True label: {short_mapping_dict[true_lab[i // 2]]}\n'
+                  f'Predicted label: {short_mapping_dict[pred_lab[i // 2]]}',
+                  fontdict={'fontsize': 12, 'fontweight': 'medium'})
         plt.axis('off')
         f.add_subplot(n // col, 2 * col, i + 2)
         plt.imshow(patch_images[i // 2])
         plt.axis('off')
 
-        plt.title(f'True label: {short_mapping_dict[true_lab[i // 2]]},\n'
-                  f'predict label: {short_mapping_dict[pred_lab_trans[i // 2]]}',
-                  fontdict={'fontsize': 8, 'fontweight': 'medium'})
+        plt.title(f'True label: {short_mapping_dict[true_lab[i // 2]]}\n'
+                  f'Predicted label: {short_mapping_dict[pred_lab_trans[i // 2]]}',
+                  fontdict={'fontsize': 12, 'fontweight': 'medium'})
     f.subplots_adjust(left=None,
                       bottom=None,
                       right=None,
