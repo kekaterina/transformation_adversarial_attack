@@ -107,26 +107,26 @@ ADVERSARIAL_IMAGES_MAPPING = {
             'original': DATA_MAPPING['test_images'],
             'resnet':'/space/kurdenkova/experiments_dump/resnet_32_custom_adv_images.npy',
             'cbn':'/space/kurdenkova/experiments_dump/cbn_32_custom_adv_images.npy',
-            'adv_cbn': '/space/kurdenkova/froms6/dump/article_data/images_without_transform/adv_cbn_32_custom_adv_images.npy' #article_data
+            'adv_cbn': '/space/kurdenkova/froms6/dump/article_data/images_without_transform/adv_cbn_32_custom_adv_images.npy'
         },
     20:
         {
             'original': DATA_MAPPING['test_images'],
-            'resnet':'/space/kurdenkova/experiments_dump/exp_for_table_20_resnet/full_20_resnet_images.npy',#'/dump/ekurdenkova/for_exp_with_random/images_without_transform/resnet_20_custom_adv_images.npy',
-            'cbn':'/space/kurdenkova/experiments_dump/exp_for_table_20_cbn/full_20_cbn_images.npy',#'/dump/ekurdenkova/for_exp_with_random/images_without_transform/cbn_20_custom_adv_images.npy',
+            'resnet':'/space/kurdenkova/experiments_dump/exp_for_table_20_resnet/full_20_resnet_images.npy',
+            'cbn':'/space/kurdenkova/experiments_dump/exp_for_table_20_cbn/full_20_cbn_images.npy',
             'adv_cbn': '/space/kurdenkova/froms6/dump/article_data/images_without_transform/adv_cbn_20_custom_adv_images.npy'
         },
     10:
         {
             'original': DATA_MAPPING['test_images'],
             'resnet': '/dump/ekurdenkova/for_exp_with_random/images_without_transform/resnet_10_custom_adv_images.npy',
-            'cbn': '/dump/ekurdenkova/for_exp_with_random/images_without_transform/cbn_10_custom_adv_images.npy', #article_data
+            'cbn': '/dump/ekurdenkova/for_exp_with_random/images_without_transform/cbn_10_custom_adv_images.npy',
         },
     15:
         {
             'original': DATA_MAPPING['test_images'],
             'resnet': '/dump/ekurdenkova/for_exp_with_random/images_without_transform/resnet_15_custom_adv_images.npy',
-            'cbn': '/dump/ekurdenkova/for_exp_with_random/images_without_transform/cbn_15_custom_adv_images.npy', #for_exp_sizing
+            'cbn': '/dump/ekurdenkova/for_exp_with_random/images_without_transform/cbn_15_custom_adv_images.npy',
         },
     25:
         {
@@ -145,8 +145,8 @@ MODEL_KEY_FOR_PROCESSING_RESULTS = ['resnet', 'cbn', 'adv_cbn']
 DEFAULT_MODEL_LIST = ['resnet', 'adv_cbn', 'cbn']
 
 OUTPUT_PATH = 'output_exp'
-OUTPUT_PATH_TRANSFORMATION_IMAGE = '/space/kurdenkova/rotate_change/' #'transformations_for_final_table/' #customPGD/'
-OUTPUT_PATH_TRANSFORMATION_CSV = '/space/kurdenkova/rotate_change' #'transformations_for_final_table' #for_exp_sizing' #/article_data'
+OUTPUT_PATH_TRANSFORMATION_IMAGE = '/space/kurdenkova/rotate_change/' #'transformations_for_final_table/'
+OUTPUT_PATH_TRANSFORMATION_CSV = '/space/kurdenkova/rotate_change' #'transformations_for_final_table' #for_exp_sizing'
 PREFIX_NAME = 'for_table'
 OUTPUT_MODEL_NAME = 'model_t'
 
