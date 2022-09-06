@@ -7,7 +7,7 @@ python runner.py \
         --target False \
         --patch-type square \
         --poln False \
-        --filename cbn_32_castr_square_untarg
+        --filename /space/kurdenkova/experiments_dump/art_full/cbn_32_castr_square_untarg
 
 # filename поменять на свое название, куда сохранять.
 # my_code_alone/bagnet/cbn_32_castr_square_untarg.npy

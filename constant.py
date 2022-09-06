@@ -4,12 +4,12 @@ from torchvision.models import resnet18
 from bagnet import ClippedBagNet
 
 
-MODEL_MAPPING = {'resnet': '../../models/resnet18_10_classes_state_dict.pth',
-                 'cbn': '../../models/cbn_10_classes_state_dict.pth',
-                 'adv_cbn': '../../models/adv_cbn_10_classes_state_dict.pth',
-                 'cbn_patch': '../../models/cbn_10_classes_state_dict.pth',
-                 'resnet_patch': '../../models/resnet18_10_classes_state_dict.pth',
-                 'adv_cbn_patch': '../../models/adv_cbn_10_classes_state_dict.pth',}
+MODEL_MAPPING = {'resnet': '/home/kurdenkova/models/resnet18_10_classes_state_dict.pth',
+                 'cbn': '/home/kurdenkova/models/cbn_10_classes_state_dict.pth',
+                 'adv_cbn': '/home/kurdenkova/models/adv_cbn_10_classes_state_dict.pth',
+                 'cbn_patch': '/home/kurdenkova/models/cbn_10_classes_state_dict.pth',
+                 'resnet_patch': '/home/kurdenkova/models/resnet18_10_classes_state_dict.pth',
+                 'adv_cbn_patch': '/home/kurdenkova/models/adv_cbn_10_classes_state_dict.pth',}
 
 
 CUSTOM_MODEL_LOAD_PARAMS = {
@@ -70,10 +70,10 @@ CUSTOM_MODEL_LOAD_PARAMS = {
 }
 
 
-DATA_MAPPING = {'images': '../../my_imagenet/images_data_dump_10_class_1000_pic.npy',
-                'labels': '../../my_imagenet/res_yys_10_class_1000_pic.npy',
-                'test_images': '../../my_imagenet/images_test_part_imagenet_10_classes_1000_pic.npy',
-                'test_labels': '../../my_imagenet/labels_test_part_imagenet_10_classes_1000_pic.npy', }
+DATA_MAPPING = {'images': '~/my_imagenet/images_data_dump_10_class_1000_pic.npy',
+                'labels': '~/my_imagenet/res_yys_10_class_1000_pic.npy',
+                'test_images': '/home/kurdenkova/my_imagenet/images_test_part_imagenet_10_classes_1000_pic.npy',
+                'test_labels': '/home/kurdenkova/my_imagenet/labels_test_part_imagenet_10_classes_1000_pic.npy', }
 
 
 ADVERSARIAL_IMAGES_MAPPING = {
@@ -87,21 +87,34 @@ ADVERSARIAL_IMAGES_MAPPING = {
     50:
         {
             'original': DATA_MAPPING['test_images'],
-            'resnet': '/dump/ekurdenkova/article_data/images_without_transform/resnet_50_custom_adv_images.npy',
+            'resnet': '/space/kurdenkova/experiments_dump/exp_for_table_50_resnet/full_50_resnet_images.npy',
+            'cbn': '/space/kurdenkova/experiments_dump/exp_for_table_50_cbn/full_50_cbn_images.npy',
+        },
+    40:
+        {
+            'original': DATA_MAPPING['test_images'],
+            'resnet': '/space/kurdenkova/experiments_dump/exp_for_table_40_resnet/full_40_resnet_images.npy',
+            'cbn': '/space/kurdenkova/experiments_dump/exp_for_table_40_cbn/full_40_cbn_images.npy',
+        },
+    60:
+        {
+            'original': DATA_MAPPING['test_images'],
+            'resnet': '/space/kurdenkova/experiments_dump/exp_for_table_60_resnet/full_60_resnet_images.npy',
+            'cbn': '/space/kurdenkova/experiments_dump/exp_for_table_60_cbn/full_60_cbn_images.npy',
         },
     32:
         {
             'original': DATA_MAPPING['test_images'],
-            'resnet': '/dump/ekurdenkova/for_exp_with_random/images_without_transform/resnet_32_custom_adv_images.npy',
-            'cbn': '/dump/ekurdenkova/for_exp_with_random/images_without_transform/cbn_32_custom_adv_images.npy',
-            'adv_cbn': '/dump/ekurdenkova/article_data/images_without_transform/adv_cbn_32_custom_adv_images.npy' #article_data
+            'resnet':'/space/kurdenkova/experiments_dump/resnet_32_custom_adv_images.npy',
+            'cbn':'/space/kurdenkova/experiments_dump/cbn_32_custom_adv_images.npy',
+            'adv_cbn': '/space/kurdenkova/froms6/dump/article_data/images_without_transform/adv_cbn_32_custom_adv_images.npy' #article_data
         },
     20:
         {
             'original': DATA_MAPPING['test_images'],
-            'resnet': '/dump/ekurdenkova/for_exp_with_random/images_without_transform/resnet_20_custom_adv_images.npy',
-            'cbn': '/dump/ekurdenkova/for_exp_with_random/images_without_transform/cbn_20_custom_adv_images.npy',
-            'adv_cbn': '/dump/ekurdenkova/article_data/images_without_transform/adv_cbn_20_custom_adv_images.npy'
+            'resnet':'/space/kurdenkova/experiments_dump/exp_for_table_20_resnet/full_20_resnet_images.npy',#'/dump/ekurdenkova/for_exp_with_random/images_without_transform/resnet_20_custom_adv_images.npy',
+            'cbn':'/space/kurdenkova/experiments_dump/exp_for_table_20_cbn/full_20_cbn_images.npy',#'/dump/ekurdenkova/for_exp_with_random/images_without_transform/cbn_20_custom_adv_images.npy',
+            'adv_cbn': '/space/kurdenkova/froms6/dump/article_data/images_without_transform/adv_cbn_20_custom_adv_images.npy'
         },
     10:
         {
@@ -128,16 +141,16 @@ PATCHGUARD_MODEL = ['resnet_agg_none', 'clipped_agg_none', 'patch_cbn_agg_none']
 
 SIMPLE_IMAGE_KEY = ['rotate_images', 'dark_images', 'gauss_images', 'combo_images']
 ADV_IMAGE_KEY = ['adv_rotate_images', 'adv_dark_images', 'adv_gauss_images', 'adv_combo_images']
-MODEL_KEY_FOR_PROCESSING_RESULTS = ['resnet', 'cbn']#, 'adv_cbn']
+MODEL_KEY_FOR_PROCESSING_RESULTS = ['resnet', 'cbn', 'adv_cbn']
 DEFAULT_MODEL_LIST = ['resnet', 'adv_cbn', 'cbn']
 
 OUTPUT_PATH = 'output_exp'
-OUTPUT_PATH_TRANSFORMATION_IMAGE = '/dump/ekurdenkova/gitlab/No_fork/guardiann/guardiann/bagnet/transformations/for_exp_with_random/' #customPGD/'
-OUTPUT_PATH_TRANSFORMATION_CSV = '/dump/ekurdenkova/for_exp_with_random' #for_exp_sizing' #/article_data'
+OUTPUT_PATH_TRANSFORMATION_IMAGE = '/space/kurdenkova/rotate_change/' #'transformations_for_final_table/' #customPGD/'
+OUTPUT_PATH_TRANSFORMATION_CSV = '/space/kurdenkova/rotate_change' #'transformations_for_final_table' #for_exp_sizing' #/article_data'
 PREFIX_NAME = 'for_table'
 OUTPUT_MODEL_NAME = 'model_t'
 
-ALL_QUADRIC_DF_OUTPUT = 'all_quadric_df_for_table_for_exp_with_random_42'
-PATCH_ALL_QUADRIC_DF_OUTPUT = 'patch_all_quadric_df_for_for_exp_with_random_42'
+ALL_QUADRIC_DF_OUTPUT = 'all_quadric_rotate_change_with_adv'
+PATCH_ALL_QUADRIC_DF_OUTPUT = 'patch_all_quadric_rotate_change_eith_adv'
 
 RANDOM_STATE = 42

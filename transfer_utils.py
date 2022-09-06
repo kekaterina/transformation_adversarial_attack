@@ -37,7 +37,10 @@ def predict_accuracy(model, x, y, num_classes=10, batch_size=1, device='cuda'):
 
 def predict_patchguard(model, x, y, batch_size=1, kind='m', rf_size=33, thres=0.0, rf_stride=8,
                        patch_size=100, device='cuda'):
-    window_size = int(ceil((patch_size + rf_size - 1) / rf_stride))
+    if patch_size==60:
+        window_size = 5
+    else:
+        window_size = int(ceil((patch_size + rf_size - 1) / rf_stride))
     cuda.empty_cache()
 
     test_dataset = ImagenetDataset(Tensor(x), LongTensor(y))

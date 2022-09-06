@@ -8,7 +8,7 @@ import torch
 import numpy as np
 
 
-def get_adv_images(images, labels, sticker_size, im_shape, attack, shift=3):
+def get_adv_images(images, labels, sticker_size, im_shape, attack, shift=1):
     #sticker_size*shift, sticker_size*shift это надо потом добавить, пока что результаты без шифта получены
     for row in range(0, im_shape[0] - sticker_size, sticker_size):
         for col in range(0, im_shape[1] - sticker_size, sticker_size):

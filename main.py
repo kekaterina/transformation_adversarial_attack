@@ -409,9 +409,9 @@ def attack_step_with_batch(
     all_results_pred = np.concatenate(all_results_pred, axis=0)
     all_id_s = np.concatenate(all_id_s, axis=0)
 
-    np.save(f'{output_path}/all_results_images_new-4', all_results_images)
-    np.save(f'{output_path}/all_results_pred_new-4', all_results_pred)
-    np.save(f'{output_path}/all_id_s_new-4', all_id_s)
+    np.save(f'{output_path}/all_results_images_new-{num}', all_results_images)
+    np.save(f'{output_path}/all_results_pred_new-{num}', all_results_pred)
+    np.save(f'{output_path}/all_id_s_new-{num}', all_id_s)
     torch.cuda.empty_cache()
 
     res = get_unbatching_array(images=all_results_images,

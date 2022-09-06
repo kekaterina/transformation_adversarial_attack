@@ -7,8 +7,8 @@ import cv2 as cv
 import numpy as np
 
 
-TRANSFORMATION_PARAMS = {'scale': {'min': 0.9, 'max': 1.4},
-                         'rotation': {'min': -22.5, 'max': 22.5},
+TRANSFORMATION_PARAMS = {'scale': {'min': 0.8, 'max': 1.},
+                         'rotation': {'min': -10., 'max': 10.},
                          'dark': {'min': -0.05, 'max': 0.05}
                          }
 

@@ -13,7 +13,7 @@ from constant import MODEL_MAPPING, DATA_MAPPING, ADVERSARIAL_IMAGES_MAPPING, \
 
 from main import str2bool
 
-HARD_SIZE_FOR_DEBUGGING = 10000
+HARD_SIZE_FOR_DEBUGGING = 1000
 
 
 def parse_arguments():
