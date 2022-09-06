@@ -145,8 +145,8 @@ MODEL_KEY_FOR_PROCESSING_RESULTS = ['resnet', 'cbn', 'adv_cbn']
 DEFAULT_MODEL_LIST = ['resnet', 'adv_cbn', 'cbn']
 
 OUTPUT_PATH = 'output_exp'
-OUTPUT_PATH_TRANSFORMATION_IMAGE = '/space/kurdenkova/rotate_change/' #'transformations_for_final_table/'
-OUTPUT_PATH_TRANSFORMATION_CSV = '/space/kurdenkova/rotate_change' #'transformations_for_final_table' #for_exp_sizing'
+OUTPUT_PATH_TRANSFORMATION_IMAGE = '/space/kurdenkova/rotate_change/'
+OUTPUT_PATH_TRANSFORMATION_CSV = '/space/kurdenkova/rotate_change'
 PREFIX_NAME = 'for_table'
 OUTPUT_MODEL_NAME = 'model_t'
 
