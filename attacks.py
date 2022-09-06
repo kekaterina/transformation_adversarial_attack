@@ -9,7 +9,6 @@ import numpy as np
 
 
 def get_adv_images(images, labels, sticker_size, im_shape, attack, shift=1):
-    #sticker_size*shift, sticker_size*shift это надо потом добавить, пока что результаты без шифта получены
     for row in range(0, im_shape[0] - sticker_size, sticker_size):
         for col in range(0, im_shape[1] - sticker_size, sticker_size):
             place = (row, col)
@@ -73,7 +72,7 @@ class PgdSticker:
         loss,
         sticker_size=20,
         place=(0, 0),
-        top=1, #5,
+        top=1,
     ):
         place_i, place_j = place
 
@@ -95,7 +94,6 @@ class PgdSticker:
             pred = self.model(new_pic)
             pred = pred[0].cpu().detach().numpy()
 
-            # сделать так, чтобы возвращался список успехов. если есть хотя бы один, то закончили подбирать.
             if self.target:
                 success = succsess_metric_top_target(
                     y=y[0],
@@ -204,24 +202,6 @@ class PgdSticker:
         pred = pred.cpu().detach().numpy()
         preds.append(np.argmax(pred, axis=1))
 
-            # сделать так, чтобы возвращался список успехов. если есть хотя бы один, то закончили подбирать.
-            #if self.target:
-            #    success = succsess_metric_top_target(
-            #        y=y[0],
-            #        pred=pred,
-            #    )
-            #    if success or i == (self.iters - 1):
-            #        print(f'iter return {i}')
-            #        return new_pic, success, np.argmax(pred)
-
-            #else:
-            #    success = without_top_succsess_metric_top_untarget(
-            #        y=y[0],
-            #        pred=pred,
-            #    )
-            #    if success or i == (self.iters - 1):
-            #        print(f'iter return {i}')
-            #        return new_pic, success, np.argmax(pred)
         return new_pic, None, preds
 
 class SpsaSticker(LinfSPSAAttack):
@@ -537,10 +517,5 @@ def get_adv_images_with_batch(images, labels, sticker_size, attack, place, id):
     adv_images, success, pred_top = attack.perturb(
         x=images, sticker_size=sticker_size, y=labels, place=place, is_batch=True,
     )
-    #if success:
-    #    return {
-    #        'adv_images': adv_images,
-    #        'success': success,
-    #        'pred_top': pred_top,
-    #    }
+
     return {'adv_images': adv_images, 'success': success, 'pred_top': pred_top}
