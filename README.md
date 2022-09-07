@@ -1,3 +1,7 @@
+## Effect of transformations on the success of adversarial attacks for Clipped BagNet and ResNet image classifiers
+
+## Влияние трансформаций на успешность состязательных атак для классификаторов изображений Clipped BagNet и ResNet
+
 Предварительно запустить
 ```shell
 $ sh setup.sh
@@ -50,6 +54,6 @@ $ tensorboard --logdir ./output_exp_00 --port 5001 --host 0.0.0.0
 - **output-model-name** - если перед атаками обучаем модель, то это ключ для указания имени новой модели
 
 
-Сохраненные модели можно найти по этой ссылке https://drive.google.com/drive/folders/1IDDQI1GQOLgmSbqYZImG4wgP_YgGSuEm?usp=sharing
+Сохраненные модели можно найти по этой ссылке / the saved models are here: https://drive.google.com/drive/folders/1IDDQI1GQOLgmSbqYZImG4wgP_YgGSuEm?usp=sharing
 
-Данные можно найти здесь https://drive.google.com/drive/folders/1mOx-_L11EFRFXvHl-ItCAxxNDelDHZOg?usp=sharing
+Данные можно найти здесь / the data is here: https://drive.google.com/drive/folders/1mOx-_L11EFRFXvHl-ItCAxxNDelDHZOg?usp=sharing
